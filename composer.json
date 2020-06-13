@@ -12,7 +12,8 @@
         }
     ],
     "require": {
-        "php": "^7.1"
+        "php": "^7.1",
+        "symfony/console": "^5.1"
     },
     "require-dev" : {
         "phpunit/phpunit": "^8.5",
@@ -29,6 +30,9 @@
             "VStelmakh\\Covelyzer\\Tests\\": "tests/"
         }
     },
+    "bin": [
+        "bin/covelyzer"
+    ],
     "scripts": {
         "test:phpcs": "vendor/bin/phpcs -n",
         "test:phpstan": "vendor/bin/phpstan analyse --ansi --no-progress",
