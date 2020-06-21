@@ -1,6 +1,6 @@
 {
     "name": "vstelmakh/covelyzer",
-    "description": "Library to analyze test coverage report in clover format",
+    "description": "Library to analyze PHPUnit test coverage report in clover format",
     "keywords": ["coverage", "report", "analyzer", "test", "phpunit", "console", "cli"],
     "type": "library",
     "license": "MIT",
@@ -14,10 +14,11 @@
     "require": {
         "php": "^7.1",
         "ext-dom": "*",
-        "symfony/console": "^5.1"
+        "ext-libxml": "*",
+        "symfony/console": "^2.7|^3|^4|^5"
     },
     "require-dev" : {
-        "phpunit/phpunit": "^8.5",
+        "phpunit/phpunit": "^7|^8|^9",
         "phpstan/phpstan": "^0.12",
         "squizlabs/php_codesniffer": "^3.5"
     },
