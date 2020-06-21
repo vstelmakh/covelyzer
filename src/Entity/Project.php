@@ -20,8 +20,9 @@ class Project extends AbstractEntity
     {
         parent::__construct($xpathElement);
 
-        $timestamp = $this->getXpathElement()->getAttribute('timestamp') ?? '';
-        $this->timestamp = \DateTimeImmutable::createFromFormat('U', $timestamp) ?: null;
+        $timestamp = $this->getXpathElement()->getAttribute('timestamp');
+        $datetime = $timestamp ? \DateTimeImmutable::createFromFormat('U', $timestamp) : null;
+        $this->timestamp = $datetime ?: null;
     }
 
     /**
