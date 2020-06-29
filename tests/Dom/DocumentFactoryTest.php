@@ -1,8 +1,8 @@
 <?php
 
-namespace VStelmakh\Covelyzer\Tests\Xml;
+namespace VStelmakh\Covelyzer\Tests\Dom;
 
-use VStelmakh\Covelyzer\Xml\DocumentFactory;
+use VStelmakh\Covelyzer\Dom\DocumentFactory;
 use PHPUnit\Framework\TestCase;
 
 class DocumentFactoryTest extends TestCase

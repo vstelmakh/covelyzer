@@ -5,7 +5,7 @@ namespace VStelmakh\Covelyzer\Tests\Entity;
 use VStelmakh\Covelyzer\Entity\File;
 use PHPUnit\Framework\TestCase;
 use VStelmakh\Covelyzer\Entity\FileMetrics;
-use VStelmakh\Covelyzer\Xml\XpathElement;
+use VStelmakh\Covelyzer\Dom\XpathElement;
 
 class FileTest extends TestCase
 {

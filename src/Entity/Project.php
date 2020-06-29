@@ -2,7 +2,7 @@
 
 namespace VStelmakh\Covelyzer\Entity;
 
-use VStelmakh\Covelyzer\Xml\XpathElement;
+use VStelmakh\Covelyzer\Dom\XpathElement;
 
 class Project extends AbstractEntity
 {

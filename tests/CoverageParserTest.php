@@ -8,8 +8,8 @@ use PHPUnit\Framework\TestCase;
 use VStelmakh\Covelyzer\CoverageParser;
 use VStelmakh\Covelyzer\Entity\Project;
 use VStelmakh\Covelyzer\Util\FileReader;
-use VStelmakh\Covelyzer\Xml\DocumentFactory;
-use VStelmakh\Covelyzer\Xml\XpathElement;
+use VStelmakh\Covelyzer\Dom\DocumentFactory;
+use VStelmakh\Covelyzer\Dom\XpathElement;
 
 class CoverageParserTest extends TestCase
 {

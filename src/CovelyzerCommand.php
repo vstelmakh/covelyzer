@@ -9,7 +9,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use VStelmakh\Covelyzer\Util\FileReader;
-use VStelmakh\Covelyzer\Xml\DocumentFactory;
+use VStelmakh\Covelyzer\Dom\DocumentFactory;
 
 class CovelyzerCommand extends Command
 {

@@ -1,8 +1,8 @@
 <?php
 
-namespace VStelmakh\Covelyzer\Tests\Xml;
+namespace VStelmakh\Covelyzer\Tests\Dom;
 
-use VStelmakh\Covelyzer\Xml\XpathElement;
+use VStelmakh\Covelyzer\Dom\XpathElement;
 use PHPUnit\Framework\TestCase;
 
 class XpathElementTest extends TestCase

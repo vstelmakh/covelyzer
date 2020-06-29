@@ -1,6 +1,6 @@
 <?php
 
-namespace VStelmakh\Covelyzer\Xml;
+namespace VStelmakh\Covelyzer\Dom;
 
 class XpathElement
 {

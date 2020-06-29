@@ -6,7 +6,7 @@ use VStelmakh\Covelyzer\Entity\File;
 use VStelmakh\Covelyzer\Entity\Project;
 use PHPUnit\Framework\TestCase;
 use VStelmakh\Covelyzer\Entity\ProjectMetrics;
-use VStelmakh\Covelyzer\Xml\XpathElement;
+use VStelmakh\Covelyzer\Dom\XpathElement;
 
 class ProjectTest extends TestCase
 {
