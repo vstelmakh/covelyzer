@@ -1,8 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace VStelmakh\Covelyzer;
 
 use VStelmakh\Covelyzer\Entity\Project;
+use VStelmakh\Covelyzer\Util\FileReader;
+use VStelmakh\Covelyzer\Xml\DocumentFactory;
 use VStelmakh\Covelyzer\Xml\XpathElement;
 
 class CoverageParser
@@ -10,13 +14,33 @@ class CoverageParser
     private const XSD_PATH = __DIR__ . '/../resources/clover-phpunit.xsd';
 
     /**
+     * @var DocumentFactory
+     */
+    private $documentFactory;
+
+    /**
+     * @var FileReader
+     */
+    private $fileReader;
+
+    /**
+     * @param DocumentFactory $documentFactory
+     * @param FileReader $fileReader
+     */
+    public function __construct(DocumentFactory $documentFactory, FileReader $fileReader)
+    {
+        $this->documentFactory = $documentFactory;
+        $this->fileReader = $fileReader;
+    }
+
+    /**
      * @param string $filePath
      * @return Project
      */
     public function parseCoverage(string $filePath): Project
     {
-        $xml = $this->getFileContents($filePath);
-        $domDocument = $this->getDomDocument($xml, self::XSD_PATH);
+        $xml = $this->fileReader->getContents($filePath);
+        $domDocument = $this->documentFactory->createDocument($xml, self::XSD_PATH);
         $domXpath = new \DOMXPath($domDocument);
         return $this->getProject($domXpath);
     }
@@ -27,8 +51,9 @@ class CoverageParser
      */
     private function getProject(\DOMXPath $domXpath): Project
     {
+        /** @var \DOMNodeList<\DOMElement> $projectNodeList */
         $projectNodeList = $domXpath->query('//project');
-        if (!$projectNodeList) {
+        if ($projectNodeList->item(0) === null) {
             throw new \RuntimeException('XML parse error. Project node not found');
         }
 
@@ -37,59 +62,5 @@ class CoverageParser
 
         $xpathElement = new XpathElement($domXpath, $projectElement);
         return new Project($xpathElement);
-    }
-
-    /**
-     * @param string $filePath
-     * @return string
-     */
-    private function getFileContents(string $filePath): string
-    {
-        if (!is_file($filePath)) {
-            throw new \InvalidArgumentException(sprintf('File "%s" not exist', $filePath));
-        }
-
-        if (!is_readable($filePath)) {
-            throw new \RuntimeException(sprintf('File "%s" not readable', $filePath));
-        }
-
-        $contents = @file_get_contents($filePath);
-
-        if ($contents === false) {
-            throw new \RuntimeException(sprintf('File "%s" get contents error', $filePath));
-        }
-
-        return $contents;
-    }
-
-    /**
-     * @param string $xml
-     * @param string|null $xsdFilePath
-     * @return \DOMDocument
-     */
-    private function getDomDocument(string $xml, ?string $xsdFilePath = null): \DOMDocument
-    {
-        $originalErrorState = \libxml_use_internal_errors(true);
-
-        $domDocument = new \DOMDocument();
-        @$domDocument->loadXML($xml, LIBXML_PARSEHUGE);
-        if ($xsdFilePath) {
-            @$domDocument->schemaValidate($xsdFilePath);
-        }
-
-        $errors = \libxml_get_errors();
-        if (!empty($errors)) {
-            $errorMessage = 'XML parse error' . PHP_EOL;
-
-            foreach ($errors as $error) {
-                $errorMessage .= sprintf(' - Line %s, column %s: %s', $error->line, $error->column, $error->message);
-            }
-
-            \libxml_clear_errors();
-            throw new \RuntimeException($errorMessage);
-        }
-
-        \libxml_use_internal_errors($originalErrorState);
-        return $domDocument;
     }
 }
