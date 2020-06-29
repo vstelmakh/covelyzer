@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace VStelmakh\Covelyzer\Tests;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use VStelmakh\Covelyzer\CoverageParser;
 use VStelmakh\Covelyzer\Entity\Project;
@@ -23,6 +24,7 @@ class CoverageParserTest extends TestCase
     {
         $filePath = 'path/to/coverage.xml';
 
+        /** @var FileReader&MockObject $fileReader */
         $fileReader = $this->createMock(FileReader::class);
         $fileReader
             ->expects($this->once())
@@ -39,6 +41,7 @@ class CoverageParserTest extends TestCase
         $element->setAttribute('timestamp', $timestamp ?? '');
         $rootElement->appendChild($element);
 
+        /** @var DocumentFactory&MockObject $documentFactory */
         $documentFactory = $this->createMock(DocumentFactory::class);
         $documentFactory
             ->expects($this->once())
