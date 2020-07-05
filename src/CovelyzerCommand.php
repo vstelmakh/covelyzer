@@ -8,6 +8,9 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use VStelmakh\Covelyzer\Report\FileCoverageReport;
+use VStelmakh\Covelyzer\Report\ProjectCoverageReport;
+use VStelmakh\Covelyzer\Report\ReportInterface;
 use VStelmakh\Covelyzer\Util\FileReader;
 use VStelmakh\Covelyzer\Dom\DocumentFactory;
 
@@ -36,6 +39,20 @@ class CovelyzerCommand extends Command
         $displayDateTime = $datetime ? $datetime->format('Y-m-d H:i:s') : 'not defined';
         $output->writeln('Coverage timestamp: ' . $displayDateTime);
 
-        return self::SUCCESS;
+        $status = self::SUCCESS;
+
+        $reports = [
+            new ProjectCoverageReport($project, 100),
+            new FileCoverageReport($project, 100),
+        ];
+
+        /** @var ReportInterface $report */
+        foreach ($reports as $report) {
+            $output->writeln('');
+            $report->render($output);
+            $status = $report->isSuccess() === false ? self::FAILURE : $status;
+        }
+
+        return $status;
     }
 }
