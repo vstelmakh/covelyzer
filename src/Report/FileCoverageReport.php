@@ -1,10 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace VStelmakh\Covelyzer\Report;
 
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Output\OutputInterface;
 use VStelmakh\Covelyzer\Entity\Project;
+use VStelmakh\Covelyzer\CoverageCalculator;
 
 class FileCoverageReport implements ReportInterface
 {
@@ -12,6 +15,11 @@ class FileCoverageReport implements ReportInterface
      * @var Project
      */
     private $project;
+
+    /**
+     * @var CoverageCalculator
+     */
+    private $coverageCalculator;
 
     /**
      * @var float
@@ -25,11 +33,13 @@ class FileCoverageReport implements ReportInterface
 
     /**
      * @param Project $project
+     * @param CoverageCalculator $coverageCalculator
      * @param float $minCoverage
      */
-    public function __construct(Project $project, float $minCoverage)
+    public function __construct(Project $project, CoverageCalculator $coverageCalculator, float $minCoverage)
     {
         $this->project = $project;
+        $this->coverageCalculator = $coverageCalculator;
         $this->minCoverage = $minCoverage;
         $this->smallCoverageFiles = $this->getFilesCoverageLessThan($project, $minCoverage);
     }
@@ -79,13 +89,9 @@ class FileCoverageReport implements ReportInterface
             $fileName = $file->getName();
             $metrics = $file->getMetrics();
 
-            $elements = $metrics->getElements();
-            if ($elements > 0) {
-                $coveredElements = $metrics->getCoveredElements();
-                $coveragePercentage = (float) ($coveredElements / $elements) * 100;
-                if ($coveragePercentage < $minCoverage) {
-                    $result[$fileName] = $coveragePercentage;
-                }
+            $coverage = $this->coverageCalculator->getCoverage($metrics);
+            if ($coverage !== null && $coverage < $minCoverage) {
+                $result[$fileName] = $coverage;
             }
         }
 

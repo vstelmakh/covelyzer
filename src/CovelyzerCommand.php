@@ -41,9 +41,10 @@ class CovelyzerCommand extends Command
 
         $status = self::SUCCESS;
 
+        $coverageCalculator = new CoverageCalculator(2);
         $reports = [
-            new ProjectCoverageReport($project, 100),
-            new FileCoverageReport($project, 100),
+            new ProjectCoverageReport($project, $coverageCalculator, 100),
+            new FileCoverageReport($project, $coverageCalculator, 100),
         ];
 
         /** @var ReportInterface $report */

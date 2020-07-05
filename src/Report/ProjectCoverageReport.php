@@ -1,10 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace VStelmakh\Covelyzer\Report;
 
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Output\OutputInterface;
 use VStelmakh\Covelyzer\Entity\Project;
+use VStelmakh\Covelyzer\CoverageCalculator;
 
 class ProjectCoverageReport implements ReportInterface
 {
@@ -12,6 +15,11 @@ class ProjectCoverageReport implements ReportInterface
      * @var Project
      */
     private $project;
+
+    /**
+     * @var CoverageCalculator
+     */
+    private $coverageCalculator;
 
     /**
      * @var float|null
@@ -23,11 +31,12 @@ class ProjectCoverageReport implements ReportInterface
      */
     private $isSuccess;
 
-    public function __construct(Project $project, float $minCoverage = 0)
+    public function __construct(Project $project, CoverageCalculator $coverageCalculator, float $minCoverage)
     {
         $this->project = $project;
+        $this->coverageCalculator = $coverageCalculator;
         // TODO: handle null case
-        $this->coverage = $this->getCoverage($project);
+        $this->coverage = $coverageCalculator->getCoverage($project->getMetrics());
         $this->isSuccess = $this->coverage >= $minCoverage;
     }
 
@@ -58,22 +67,6 @@ class ProjectCoverageReport implements ReportInterface
     }
 
     /**
-     * Return coverage percentage or null if file don't have any elements (e.g. interface)
-     *
-     * @param Project $project
-     * @return float|null
-     */
-    private function getCoverage(Project $project): ?float
-    {
-        $metrics = $project->getMetrics();
-        $elements = $metrics->getElements();
-        $coveredElements = $metrics->getCoveredElements();
-        return $elements > 0
-            ? (float) ($coveredElements / $elements) * 100
-            : null;
-    }
-
-    /**
      * @param Project $project
      * @return array&float[] key - filename, value - coverage percentage
      */
@@ -86,11 +79,9 @@ class ProjectCoverageReport implements ReportInterface
             $fileName = $file->getName();
             $metrics = $file->getMetrics();
 
-            $elements = $metrics->getElements();
-            if ($elements > 0) {
-                $coveredElements = $metrics->getCoveredElements();
-                $coveragePercentage = (float) ($coveredElements / $elements) * 100;
-                $result[$fileName] = $coveragePercentage;
+            $coverage = $this->coverageCalculator->getCoverage($metrics);
+            if ($coverage !== null) {
+                $result[$fileName] = $coverage;
             }
         }
 
