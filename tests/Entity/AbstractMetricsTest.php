@@ -22,13 +22,13 @@ class AbstractMetricsTest extends TestCase
 
         $metrics = $domDocument->createElement('metrics');
         $metrics->setAttribute('methods', '1');
-        $metrics->setAttribute('coveredMethods', '2');
+        $metrics->setAttribute('coveredmethods', '2');
         $metrics->setAttribute('conditionals', '3');
-        $metrics->setAttribute('coveredConditionals', '4');
+        $metrics->setAttribute('coveredconditionals', '4');
         $metrics->setAttribute('statements', '5');
-        $metrics->setAttribute('coveredStatements', '6');
+        $metrics->setAttribute('coveredstatements', '6');
         $metrics->setAttribute('elements', '7');
-        $metrics->setAttribute('coveredElements', '8');
+        $metrics->setAttribute('coveredelements', '8');
         $parent->appendChild($metrics);
 
         $domXpath = new \DOMXPath($domDocument);

@@ -28,7 +28,7 @@ abstract class AbstractMetrics extends AbstractEntity
      */
     public function getCoveredMethods(): int
     {
-        return (int) $this->getXpathElement()->getAttribute('coveredMethods');
+        return (int) $this->getXpathElement()->getAttribute('coveredmethods');
     }
 
     /**
@@ -44,7 +44,7 @@ abstract class AbstractMetrics extends AbstractEntity
      */
     public function getCoveredConditionals(): int
     {
-        return (int) $this->getXpathElement()->getAttribute('coveredConditionals');
+        return (int) $this->getXpathElement()->getAttribute('coveredconditionals');
     }
 
     /**
@@ -60,7 +60,7 @@ abstract class AbstractMetrics extends AbstractEntity
      */
     public function getCoveredStatements(): int
     {
-        return (int) $this->getXpathElement()->getAttribute('coveredStatements');
+        return (int) $this->getXpathElement()->getAttribute('coveredstatements');
     }
 
     /**
@@ -76,7 +76,7 @@ abstract class AbstractMetrics extends AbstractEntity
      */
     public function getCoveredElements(): int
     {
-        return (int) $this->getXpathElement()->getAttribute('coveredElements');
+        return (int) $this->getXpathElement()->getAttribute('coveredelements');
     }
 
     /**
