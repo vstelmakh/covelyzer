@@ -35,7 +35,6 @@ class ProjectCoverageReport implements ReportInterface
     {
         $this->project = $project;
         $this->coverageCalculator = $coverageCalculator;
-        // TODO: handle null case
         $this->coverage = $coverageCalculator->getCoverage($project->getMetrics());
         $this->isSuccess = $this->coverage >= $minCoverage;
     }
@@ -45,7 +44,8 @@ class ProjectCoverageReport implements ReportInterface
      */
     public function render(OutputInterface $output): void
     {
-        $output->writeln(sprintf('Project coverage: %s%%', $this->coverage));
+        $coverage = $this->coverage !== null ? $this->coverage . '%' : '--';
+        $output->writeln('Project coverage: ' . $coverage);
 
         $filesCoverage = $this->getFilesCoverage($this->project);
         asort($filesCoverage);
