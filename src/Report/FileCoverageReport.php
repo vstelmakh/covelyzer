@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace VStelmakh\Covelyzer\Report;
 
-use Symfony\Component\Console\Helper\Table;
-use Symfony\Component\Console\Output\OutputInterface;
+use VStelmakh\Covelyzer\CovelyzerStyle;
 use VStelmakh\Covelyzer\Entity\Project;
 use VStelmakh\Covelyzer\CoverageCalculator;
 
@@ -47,23 +46,23 @@ class FileCoverageReport implements ReportInterface
     /**
      * @inheritDoc
      */
-    public function render(OutputInterface $output): void
+    public function render(CovelyzerStyle $covelyzerStyle): void
     {
-        $output->writeln('Min coverage per file: ' . $this->minCoverage);
-        if (empty($this->smallCoverageFiles)) {
-            $output->writeln('OK');
-        } else {
-            $output->writeln('Files with coverage below minimum:');
+        $isSuccess = empty($this->smallCoverageFiles);
+        $covelyzerStyle->title('File coverage', $isSuccess);
+        $covelyzerStyle->coverage(null, $this->minCoverage);
 
+        if (!$isSuccess) {
             $filesCoverage = $this->smallCoverageFiles;
             asort($filesCoverage);
 
-            $table = new Table($output);
-            $table->setHeaders(['File', 'Coverage']);
+            $headers = ['File', 'Coverage'];
+            $rows = [];
             foreach ($filesCoverage as $file => $coverage) {
-                $table->addRow([$file, $coverage]);
+                $rows[] = [$file, $coverage];
             }
-            $table->render();
+            $covelyzerStyle->newLine();
+            $covelyzerStyle->table($headers, $rows);
         }
     }
 

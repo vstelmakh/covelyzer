@@ -2,16 +2,16 @@
 
 namespace VStelmakh\Covelyzer\Report;
 
-use Symfony\Component\Console\Output\OutputInterface;
+use VStelmakh\Covelyzer\CovelyzerStyle;
 
 interface ReportInterface
 {
     /**
-     * Render report details to output
+     * Render report details
      *
-     * @param OutputInterface $output
+     * @param CovelyzerStyle $covelyzerStyle
      */
-    public function render(OutputInterface $output): void;
+    public function render(CovelyzerStyle $covelyzerStyle): void;
 
     /**
      * True if satisfy configuration constraints

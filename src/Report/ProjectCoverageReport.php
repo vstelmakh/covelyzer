@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace VStelmakh\Covelyzer\Report;
 
-use Symfony\Component\Console\Helper\Table;
-use Symfony\Component\Console\Output\OutputInterface;
+use VStelmakh\Covelyzer\CovelyzerStyle;
 use VStelmakh\Covelyzer\Entity\Project;
 use VStelmakh\Covelyzer\CoverageCalculator;
 
@@ -27,6 +26,11 @@ class ProjectCoverageReport implements ReportInterface
     private $coverage;
 
     /**
+     * @var float
+     */
+    private $minCoverage;
+
+    /**
      * @var bool
      */
     private $isSuccess;
@@ -36,26 +40,28 @@ class ProjectCoverageReport implements ReportInterface
         $this->project = $project;
         $this->coverageCalculator = $coverageCalculator;
         $this->coverage = $coverageCalculator->getCoverage($project->getMetrics());
-        $this->isSuccess = $this->coverage >= $minCoverage;
+        $this->minCoverage = $minCoverage;
+        $this->isSuccess = $this->coverage >= $this->minCoverage;
     }
 
     /**
      * @inheritDoc
      */
-    public function render(OutputInterface $output): void
+    public function render(CovelyzerStyle $covelyzerStyle): void
     {
-        $coverage = $this->coverage !== null ? $this->coverage . '%' : '--';
-        $output->writeln('Project coverage: ' . $coverage);
+        $covelyzerStyle->title('Project coverage', $this->isSuccess);
+        $covelyzerStyle->coverage($this->coverage, $this->minCoverage);
 
         $filesCoverage = $this->getFilesCoverage($this->project);
         asort($filesCoverage);
 
-        $table = new Table($output);
-        $table->setHeaders(['File', 'Coverage']);
+        $headers = ['File', 'Coverage'];
+        $rows = [];
         foreach ($filesCoverage as $file => $coverage) {
-            $table->addRow([$file, $coverage]);
+            $rows[] = [$file, $coverage];
         }
-        $table->render();
+        $covelyzerStyle->newLine();
+        $covelyzerStyle->table($headers, $rows);
     }
 
     /**

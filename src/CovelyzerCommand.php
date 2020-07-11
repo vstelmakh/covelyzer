@@ -19,41 +19,70 @@ class CovelyzerCommand extends Command
     public const SUCCESS = 0;
     public const FAILURE = 1;
 
+    /**
+     * @var CovelyzerStyle
+     */
+    private $covelyzerStyle;
+
     protected function configure(): void
     {
         $this->setName('covelyzer');
         $this->addArgument('coverage', InputArgument::REQUIRED, 'Path to coverage report file .xml');
     }
 
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     */
+    protected function initialize(InputInterface $input, OutputInterface $output): void
+    {
+        $this->covelyzerStyle = new CovelyzerStyle($output);
+        parent::initialize($input, $output);
+    }
+
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return int
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $this->covelyzerStyle->title('Covelyzer');
+        $this->covelyzerStyle->newLine();
+        $minProjectCoverage = 100;
+        $minFileCoverage = 100;
+
         $documentFactory = new DocumentFactory();
         $fileReader = new FileReader();
         $coverageParser = new CoverageParser($documentFactory, $fileReader);
 
         /** @var string $coverageFilePath */
         $coverageFilePath = $input->getArgument('coverage');
+        /** @var string $coverageFilePath */
+        $coverageFilePath = realpath($coverageFilePath);
+        $this->covelyzerStyle->writeln('  Report:    ' . $coverageFilePath);
         $project = $coverageParser->parseCoverage($coverageFilePath);
 
         $datetime = $project->getTimestamp();
-        $displayDateTime = $datetime ? $datetime->format('Y-m-d H:i:s') : 'not defined';
-        $output->writeln('Coverage timestamp: ' . $displayDateTime);
+        $displayDateTime = $datetime ? $datetime->format('Y-m-d H:i:s') : '--';
+        $this->covelyzerStyle->writeln('  Timestamp: ' . $displayDateTime);
 
         $status = self::SUCCESS;
 
         $coverageCalculator = new CoverageCalculator(2);
         $reports = [
-            new ProjectCoverageReport($project, $coverageCalculator, 100),
-            new FileCoverageReport($project, $coverageCalculator, 100),
+            new ProjectCoverageReport($project, $coverageCalculator, $minProjectCoverage),
+            new FileCoverageReport($project, $coverageCalculator, $minFileCoverage),
         ];
 
         /** @var ReportInterface $report */
         foreach ($reports as $report) {
-            $output->writeln('');
-            $report->render($output);
+            $this->covelyzerStyle->newLine();
+            $report->render($this->covelyzerStyle);
             $status = $report->isSuccess() === false ? self::FAILURE : $status;
         }
 
+        $this->covelyzerStyle->status($status);
         return $status;
     }
 }
