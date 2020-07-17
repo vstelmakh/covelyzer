@@ -85,12 +85,10 @@ class CovelyzerStyle
     public function table(array $headers, array $rows): void
     {
         $style = new TableStyle();
-        $style
-            ->setHorizontalBorderChars('-')
-            ->setVerticalBorderChars(' ')
-            ->setDefaultCrossingChar(' ')
-            ->setHeaderTitleFormat('<fg=default;bg=default>%s</>')
-        ;
+
+        $this->setTableStyle($style, ['setHorizontalBorderChars', 'setHorizontalBorderChar'], '-');
+        $this->setTableStyle($style, ['setVerticalBorderChars', 'setVerticalBorderChar'], ' ');
+        $this->setTableStyle($style, ['setDefaultCrossingChar', 'setCrossingChar'], ' ');
 
         $table = new Table($this->output);
         $table->setHeaders($headers);
@@ -101,7 +99,7 @@ class CovelyzerStyle
     }
 
     /**
-     * @param string|iterable<mixed> $messages
+     * @param string|array<mixed> $messages
      * @param bool $newline
      * @param int $type
      */
@@ -111,7 +109,7 @@ class CovelyzerStyle
     }
 
     /**
-     * @param string|iterable<mixed> $messages
+     * @param string|array<mixed> $messages
      * @param int $type
      */
     public function writeln($messages, int $type = OutputStyle::OUTPUT_NORMAL): void
@@ -125,5 +123,28 @@ class CovelyzerStyle
     public function newLine(int $count = 1): void
     {
         $this->output->write(str_repeat(PHP_EOL, $count));
+    }
+
+    /**
+     * Implemented to handle deprecations in console component version 4.1
+     *
+     * @param TableStyle $tableStyle
+     * @param array&string[] $methods
+     * @param string $char
+     */
+    private function setTableStyle(TableStyle $tableStyle, array $methods, string $char): void
+    {
+        foreach ($methods as $method) {
+            if (method_exists(TableStyle::class, $method)) {
+                $tableStyle->{$method}($char);
+                return;
+            }
+        }
+
+        throw new \RuntimeException(sprintf(
+            'Can\'t set table style. Any of "%s" methods exist in "%s"',
+            implode(', ', $methods),
+            TableStyle::class
+        ));
     }
 }
