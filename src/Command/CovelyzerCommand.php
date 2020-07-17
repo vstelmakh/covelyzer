@@ -2,12 +2,15 @@
 
 declare(strict_types=1);
 
-namespace VStelmakh\Covelyzer;
+namespace VStelmakh\Covelyzer\Command;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use VStelmakh\Covelyzer\Console\CovelyzerStyle;
+use VStelmakh\Covelyzer\CoverageCalculator;
+use VStelmakh\Covelyzer\CoverageParser;
 use VStelmakh\Covelyzer\Report\FileCoverageReport;
 use VStelmakh\Covelyzer\Report\ProjectCoverageReport;
 use VStelmakh\Covelyzer\Report\ReportInterface;
@@ -28,6 +31,7 @@ class CovelyzerCommand extends Command
     {
         $this->setName('covelyzer');
         $this->addArgument('coverage', InputArgument::REQUIRED, 'Path to coverage report file .xml');
+        $this->addUsage('path/to/coverage.xml');
     }
 
     /**

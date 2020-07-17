@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace VStelmakh\Covelyzer\Report;
 
-use VStelmakh\Covelyzer\CovelyzerStyle;
+use VStelmakh\Covelyzer\Console\CovelyzerStyle;
 use VStelmakh\Covelyzer\Entity\Project;
 use VStelmakh\Covelyzer\CoverageCalculator;
 

@@ -15,9 +15,12 @@ foreach ($autoloadPaths as $path) {
 }
 
 $application = new Symfony\Component\Console\Application('Covelyzer', '0.1.0');
-$command = new VStelmakh\Covelyzer\CovelyzerCommand();
 
+$command = new VStelmakh\Covelyzer\Command\CovelyzerCommand();
 $application->add($command);
+
+$helpCommand = new VStelmakh\Covelyzer\Command\HelpCommand();
+$application->add($helpCommand);
 
 $application->setDefaultCommand($command->getName(), true);
 $application->run();

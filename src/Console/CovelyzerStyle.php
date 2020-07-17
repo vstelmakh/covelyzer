@@ -2,12 +2,13 @@
 
 declare(strict_types=1);
 
-namespace VStelmakh\Covelyzer;
+namespace VStelmakh\Covelyzer\Console;
 
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Helper\TableStyle;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\OutputStyle;
+use VStelmakh\Covelyzer\Command\CovelyzerCommand;
 
 class CovelyzerStyle
 {
@@ -33,7 +34,6 @@ class CovelyzerStyle
             '/ /__/ /_/ / |/ /  __/ / /_/ / / /_/  __/ /    ',
             '\___/\____/|___/\___/_/\__, / /___/\___/_/     ',
             '                      /____/                   ',
-            '',
         ]);
     }
 

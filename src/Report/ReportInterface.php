@@ -2,7 +2,7 @@
 
 namespace VStelmakh\Covelyzer\Report;
 
-use VStelmakh\Covelyzer\CovelyzerStyle;
+use VStelmakh\Covelyzer\Console\CovelyzerStyle;
 
 interface ReportInterface
 {
