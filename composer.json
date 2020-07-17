@@ -1,6 +1,6 @@
 {
     "name": "vstelmakh/covelyzer",
-    "description": "Library to analyze PHPUnit test coverage report in clover format",
+    "description": "Tool to analyze PHPUnit test coverage report in clover format",
     "keywords": ["coverage", "report", "analyzer", "test", "phpunit", "console", "cli"],
     "type": "library",
     "license": "MIT",
