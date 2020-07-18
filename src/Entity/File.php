@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace VStelmakh\Covelyzer\Entity;
 
 class File extends AbstractEntity
@@ -23,6 +25,18 @@ class File extends AbstractEntity
         $metricsNode = $this->getXpathElement()->xpath('metrics')->item(0);
         $metricsXpathElement = $this->getXpathElement()->createElement($metricsNode);
         return new FileMetrics($metricsXpathElement);
+    }
+
+    /**
+     * @return \Generator|ClassEntity[]
+     */
+    public function getClasses(): \Generator
+    {
+        $classElements = $this->getXpathElement()->xpath('.//class');
+        foreach ($classElements as $classElement) {
+            $fileXpathElement = $this->getXpathElement()->createElement($classElement);
+            yield new ClassEntity($fileXpathElement);
+        }
     }
 
     /**

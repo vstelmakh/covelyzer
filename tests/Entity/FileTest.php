@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace VStelmakh\Covelyzer\Tests\Entity;
 
+use VStelmakh\Covelyzer\Entity\ClassEntity;
 use VStelmakh\Covelyzer\Entity\File;
 use PHPUnit\Framework\TestCase;
 use VStelmakh\Covelyzer\Entity\FileMetrics;
@@ -32,6 +35,9 @@ class FileTest extends TestCase
         $metrics = $this->domDocument->createElement('metrics');
         $file->appendChild($metrics);
 
+        $class = $this->domDocument->createElement('class');
+        $file->appendChild($class);
+
         $domXpath = new \DOMXPath($this->domDocument);
         $xpathElement = new XpathElement($domXpath, $file);
 
@@ -54,5 +60,29 @@ class FileTest extends TestCase
         $expected = new FileMetrics($metricsXpathElement);
 
         $this->assertEquals($expected, $actual);
+    }
+
+    public function testGetClasses(): void
+    {
+        $actual = $this->file->getClasses();
+
+        /** @var \DOMElement $classNode */
+        $classNode = $this->domDocument->getElementsByTagName('class')->item(0);
+        $classXpathElement = $this->file->getXpathElement()->createElement($classNode);
+        $class = new ClassEntity($classXpathElement);
+        $expected = $this->getGenerator([$class]);
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * @param array|mixed[] $array
+     * @return \Generator|mixed[]
+     */
+    private function getGenerator(array $array): \Generator
+    {
+        foreach ($array as $item) {
+            yield $item;
+        }
     }
 }

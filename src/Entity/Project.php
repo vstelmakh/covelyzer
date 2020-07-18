@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace VStelmakh\Covelyzer\Entity;
 
 use VStelmakh\Covelyzer\Dom\XpathElement;
@@ -53,6 +55,18 @@ class Project extends AbstractEntity
         foreach ($fileElements as $fileElement) {
             $fileXpathElement = $this->getXpathElement()->createElement($fileElement);
             yield new File($fileXpathElement);
+        }
+    }
+
+    /**
+     * @return \Generator|ClassEntity[]
+     */
+    public function getClasses(): \Generator
+    {
+        $classElements = $this->getXpathElement()->xpath('.//class');
+        foreach ($classElements as $classElement) {
+            $fileXpathElement = $this->getXpathElement()->createElement($classElement);
+            yield new ClassEntity($fileXpathElement);
         }
     }
 
