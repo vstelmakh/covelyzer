@@ -9,7 +9,6 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use VStelmakh\Covelyzer\Console\CovelyzerStyle;
-use VStelmakh\Covelyzer\CoverageCalculator;
 use VStelmakh\Covelyzer\CoverageParser;
 use VStelmakh\Covelyzer\Report\FileCoverageReport;
 use VStelmakh\Covelyzer\Report\ProjectCoverageReport;
@@ -73,10 +72,9 @@ class CovelyzerCommand extends Command
 
         $status = self::SUCCESS;
 
-        $coverageCalculator = new CoverageCalculator(2);
         $reports = [
-            new ProjectCoverageReport($project, $coverageCalculator, $minProjectCoverage),
-            new FileCoverageReport($project, $coverageCalculator, $minFileCoverage),
+            new ProjectCoverageReport($project, $minProjectCoverage),
+            new FileCoverageReport($project, $minFileCoverage),
         ];
 
         /** @var ReportInterface $report */

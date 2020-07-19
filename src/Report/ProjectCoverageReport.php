@@ -6,7 +6,6 @@ namespace VStelmakh\Covelyzer\Report;
 
 use VStelmakh\Covelyzer\Console\CovelyzerStyle;
 use VStelmakh\Covelyzer\Entity\Project;
-use VStelmakh\Covelyzer\CoverageCalculator;
 
 class ProjectCoverageReport implements ReportInterface
 {
@@ -14,11 +13,6 @@ class ProjectCoverageReport implements ReportInterface
      * @var Project
      */
     private $project;
-
-    /**
-     * @var CoverageCalculator
-     */
-    private $coverageCalculator;
 
     /**
      * @var float|null
@@ -35,11 +29,13 @@ class ProjectCoverageReport implements ReportInterface
      */
     private $isSuccess;
 
-    public function __construct(Project $project, CoverageCalculator $coverageCalculator, float $minCoverage)
+    /**
+     * @param Project $project
+     * @param float $minCoverage
+     */
+    public function __construct(Project $project, float $minCoverage)
     {
         $this->project = $project;
-        $this->coverageCalculator = $coverageCalculator;
-        $this->coverage = $coverageCalculator->getCoverage($project->getMetrics());
         $this->minCoverage = $minCoverage;
         $this->isSuccess = $this->coverage >= $this->minCoverage;
     }
@@ -50,7 +46,8 @@ class ProjectCoverageReport implements ReportInterface
     public function render(CovelyzerStyle $covelyzerStyle): void
     {
         $covelyzerStyle->title('Project coverage', $this->isSuccess);
-        $covelyzerStyle->coverage($this->coverage, $this->minCoverage);
+        $metrics = $this->project->getMetrics();
+        $covelyzerStyle->coverage($metrics->getCoverage(), $this->minCoverage);
 
         $filesCoverage = $this->getFilesCoverage($this->project);
         asort($filesCoverage);
@@ -85,7 +82,7 @@ class ProjectCoverageReport implements ReportInterface
             $fileName = $file->getName();
             $metrics = $file->getMetrics();
 
-            $coverage = $this->coverageCalculator->getCoverage($metrics);
+            $coverage = $metrics->getCoverage();
             if ($coverage !== null) {
                 $result[$fileName] = $coverage;
             }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace VStelmakh\Covelyzer\Tests\Entity;
 
 use VStelmakh\Covelyzer\Entity\AbstractMetrics;
@@ -8,81 +10,100 @@ use VStelmakh\Covelyzer\Dom\XpathElement;
 
 class AbstractMetricsTest extends TestCase
 {
-    /**
-     * @var AbstractMetrics
-     */
-    private $abstractMetrics;
-
-    public function setUp(): void
-    {
-        $domDocument = new \DOMDocument();
-
-        $parent = $domDocument->createElement('parent');
-        $domDocument->appendChild($parent);
-
-        $metrics = $domDocument->createElement('metrics');
-        $metrics->setAttribute('methods', '1');
-        $metrics->setAttribute('coveredmethods', '2');
-        $metrics->setAttribute('conditionals', '3');
-        $metrics->setAttribute('coveredconditionals', '4');
-        $metrics->setAttribute('statements', '5');
-        $metrics->setAttribute('coveredstatements', '6');
-        $metrics->setAttribute('elements', '7');
-        $metrics->setAttribute('coveredelements', '8');
-        $parent->appendChild($metrics);
-
-        $domXpath = new \DOMXPath($domDocument);
-        $xpathElement = new XpathElement($domXpath, $metrics);
-
-        $this->abstractMetrics = $this->createAbstractMetrics($xpathElement);
-    }
-
     public function testGetMethods(): void
     {
-        $actual = $this->abstractMetrics->getMethods();
-        $this->assertSame(1, $actual);
+        $xpathElement = $this->createXpathElement(1, 2, 3, 4, 5, 6, 7, 8);
+        $abstractMetrics = $this->createAbstractMetrics($xpathElement);
+        $actual = $abstractMetrics->getMethods();
+        self::assertSame(1, $actual);
     }
 
     public function testGetCoveredMethods(): void
     {
-        $actual = $this->abstractMetrics->getCoveredMethods();
-        $this->assertSame(2, $actual);
+        $xpathElement = $this->createXpathElement(1, 2, 3, 4, 5, 6, 7, 8);
+        $abstractMetrics = $this->createAbstractMetrics($xpathElement);
+        $actual = $abstractMetrics->getCoveredMethods();
+        self::assertSame(2, $actual);
     }
 
     public function testGetConditionals(): void
     {
-        $actual = $this->abstractMetrics->getConditionals();
-        $this->assertSame(3, $actual);
+        $xpathElement = $this->createXpathElement(1, 2, 3, 4, 5, 6, 7, 8);
+        $abstractMetrics = $this->createAbstractMetrics($xpathElement);
+        $actual = $abstractMetrics->getConditionals();
+        self::assertSame(3, $actual);
     }
 
     public function testGetCoveredConditionals(): void
     {
-        $actual = $this->abstractMetrics->getCoveredConditionals();
-        $this->assertSame(4, $actual);
+        $xpathElement = $this->createXpathElement(1, 2, 3, 4, 5, 6, 7, 8);
+        $abstractMetrics = $this->createAbstractMetrics($xpathElement);
+        $actual = $abstractMetrics->getCoveredConditionals();
+        self::assertSame(4, $actual);
     }
 
     public function testGetStatements(): void
     {
-        $actual = $this->abstractMetrics->getStatements();
-        $this->assertSame(5, $actual);
+        $xpathElement = $this->createXpathElement(1, 2, 3, 4, 5, 6, 7, 8);
+        $abstractMetrics = $this->createAbstractMetrics($xpathElement);
+        $actual = $abstractMetrics->getStatements();
+        self::assertSame(5, $actual);
     }
 
     public function testGetCoveredStatements(): void
     {
-        $actual = $this->abstractMetrics->getCoveredStatements();
-        $this->assertSame(6, $actual);
+        $xpathElement = $this->createXpathElement(1, 2, 3, 4, 5, 6, 7, 8);
+        $abstractMetrics = $this->createAbstractMetrics($xpathElement);
+        $actual = $abstractMetrics->getCoveredStatements();
+        self::assertSame(6, $actual);
     }
 
     public function testGetElements(): void
     {
-        $actual = $this->abstractMetrics->getElements();
-        $this->assertSame(7, $actual);
+        $xpathElement = $this->createXpathElement(1, 2, 3, 4, 5, 6, 7, 8);
+        $abstractMetrics = $this->createAbstractMetrics($xpathElement);
+        $actual = $abstractMetrics->getElements();
+        self::assertSame(7, $actual);
     }
 
     public function testGetCoveredElements(): void
     {
-        $actual = $this->abstractMetrics->getCoveredElements();
-        $this->assertSame(8, $actual);
+        $xpathElement = $this->createXpathElement(1, 2, 3, 4, 5, 6, 7, 8);
+        $abstractMetrics = $this->createAbstractMetrics($xpathElement);
+        $actual = $abstractMetrics->getCoveredElements();
+        self::assertSame(8, $actual);
+    }
+
+    /**
+     * @dataProvider getCoverageDataProvider
+     *
+     * @param int $elements
+     * @param int $coveredElements
+     * @param int $precision
+     * @param float|null $expected
+     */
+    public function testGetCoverage(int $elements, int $coveredElements, int $precision, ?float $expected): void
+    {
+        $xpathElement = $this->createXpathElement(0, 0, 0, 0, 0, 0, $elements, $coveredElements);
+        $abstractMetrics = $this->createAbstractMetrics($xpathElement);
+        $actual = $abstractMetrics->getCoverage($precision);
+        self::assertSame($expected, $actual);
+    }
+
+    /**
+     * @return array&array[]
+     */
+    public function getCoverageDataProvider(): array
+    {
+        return [
+            [0, 0, 0, null],
+            [0, 1, 0, null],
+            [1, 0, 0, 0],
+            [2, 1, 0, 50],
+            [2, 1, 2, 50],
+            [3, 1, 0, 33],
+            [3, 1, 1, 33.3],
+        ];
     }
 
     public function testValidateElement(): void
@@ -102,6 +123,51 @@ class AbstractMetricsTest extends TestCase
         $this->createAbstractMetrics($xpathElement);
     }
 
+    /**
+     * @param int $methods
+     * @param int $coveredmethods
+     * @param int $conditionals
+     * @param int $coveredconditionals
+     * @param int $statements
+     * @param int $coveredstatements
+     * @param int $elements
+     * @param int $coveredelements
+     * @return XpathElement
+     */
+    private function createXpathElement(
+        int $methods,
+        int $coveredmethods,
+        int $conditionals,
+        int $coveredconditionals,
+        int $statements,
+        int $coveredstatements,
+        int $elements,
+        int $coveredelements
+    ): XpathElement {
+        $domDocument = new \DOMDocument();
+
+        $parent = $domDocument->createElement('parent');
+        $domDocument->appendChild($parent);
+
+        $metrics = $domDocument->createElement('metrics');
+        $metrics->setAttribute('methods', (string) $methods);
+        $metrics->setAttribute('coveredmethods', (string) $coveredmethods);
+        $metrics->setAttribute('conditionals', (string) $conditionals);
+        $metrics->setAttribute('coveredconditionals', (string) $coveredconditionals);
+        $metrics->setAttribute('statements', (string) $statements);
+        $metrics->setAttribute('coveredstatements', (string) $coveredstatements);
+        $metrics->setAttribute('elements', (string) $elements);
+        $metrics->setAttribute('coveredelements', (string) $coveredelements);
+        $parent->appendChild($metrics);
+
+        $domXpath = new \DOMXPath($domDocument);
+        return new XpathElement($domXpath, $metrics);
+    }
+
+    /**
+     * @param XpathElement $xpathElement
+     * @return AbstractMetrics
+     */
     private function createAbstractMetrics(XpathElement $xpathElement): AbstractMetrics
     {
         return new class ($xpathElement) extends AbstractMetrics {

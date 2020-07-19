@@ -80,6 +80,21 @@ abstract class AbstractMetrics extends AbstractEntity
     }
 
     /**
+     * Return coverage percentage or null if metrics don't have any elements (e.g. interface)
+     *
+     * @param int $precision
+     * @return float|null
+     */
+    public function getCoverage(int $precision = 2): ?float
+    {
+        $elements = $this->getElements();
+        $coveredElements = $this->getCoveredElements();
+        return $elements > 0
+            ? round(($coveredElements / $elements) * 100, $precision, PHP_ROUND_HALF_UP)
+            : null;
+    }
+
+    /**
      * @inheritDoc
      */
     protected function getTagName(): string

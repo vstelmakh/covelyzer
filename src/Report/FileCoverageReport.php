@@ -6,20 +6,9 @@ namespace VStelmakh\Covelyzer\Report;
 
 use VStelmakh\Covelyzer\Console\CovelyzerStyle;
 use VStelmakh\Covelyzer\Entity\Project;
-use VStelmakh\Covelyzer\CoverageCalculator;
 
 class FileCoverageReport implements ReportInterface
 {
-    /**
-     * @var Project
-     */
-    private $project;
-
-    /**
-     * @var CoverageCalculator
-     */
-    private $coverageCalculator;
-
     /**
      * @var float
      */
@@ -32,13 +21,10 @@ class FileCoverageReport implements ReportInterface
 
     /**
      * @param Project $project
-     * @param CoverageCalculator $coverageCalculator
      * @param float $minCoverage
      */
-    public function __construct(Project $project, CoverageCalculator $coverageCalculator, float $minCoverage)
+    public function __construct(Project $project, float $minCoverage)
     {
-        $this->project = $project;
-        $this->coverageCalculator = $coverageCalculator;
         $this->minCoverage = $minCoverage;
         $this->smallCoverageFiles = $this->getFilesCoverageLessThan($project, $minCoverage);
     }
@@ -88,7 +74,7 @@ class FileCoverageReport implements ReportInterface
             $fileName = $file->getName();
             $metrics = $file->getMetrics();
 
-            $coverage = $this->coverageCalculator->getCoverage($metrics);
+            $coverage = $metrics->getCoverage();
             if ($coverage !== null && $coverage < $minCoverage) {
                 $result[$fileName] = $coverage;
             }
