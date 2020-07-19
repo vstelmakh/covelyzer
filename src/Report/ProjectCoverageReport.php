@@ -15,19 +15,9 @@ class ProjectCoverageReport implements ReportInterface
     private $project;
 
     /**
-     * @var float|null
-     */
-    private $coverage;
-
-    /**
      * @var float
      */
     private $minCoverage;
-
-    /**
-     * @var bool
-     */
-    private $isSuccess;
 
     /**
      * @param Project $project
@@ -37,7 +27,6 @@ class ProjectCoverageReport implements ReportInterface
     {
         $this->project = $project;
         $this->minCoverage = $minCoverage;
-        $this->isSuccess = $this->coverage >= $this->minCoverage;
     }
 
     /**
@@ -45,17 +34,17 @@ class ProjectCoverageReport implements ReportInterface
      */
     public function render(CovelyzerStyle $covelyzerStyle): void
     {
-        $covelyzerStyle->title('Project coverage', $this->isSuccess);
+        $covelyzerStyle->title('Project coverage', $this->isSuccess());
         $metrics = $this->project->getMetrics();
         $covelyzerStyle->coverage($metrics->getCoverage(), $this->minCoverage);
 
-        $filesCoverage = $this->getFilesCoverage($this->project);
-        asort($filesCoverage);
+        $classesCoverage = $this->getClassesCoverage();
+        asort($classesCoverage);
 
-        $headers = ['File', 'Coverage'];
+        $headers = ['Class', 'Coverage'];
         $rows = [];
-        foreach ($filesCoverage as $file => $coverage) {
-            $rows[] = [$file, $coverage];
+        foreach ($classesCoverage as $class => $coverage) {
+            $rows[] = [$class, $coverage];
         }
         $covelyzerStyle->newLine();
         $covelyzerStyle->table($headers, $rows);
@@ -66,25 +55,26 @@ class ProjectCoverageReport implements ReportInterface
      */
     public function isSuccess(): bool
     {
-        return $this->isSuccess;
+        $metrics = $this->project->getMetrics();
+        $coverage = $metrics->getCoverage();
+        return $coverage >= $this->minCoverage;
     }
 
     /**
-     * @param Project $project
-     * @return array&float[] key - filename, value - coverage percentage
+     * @return array&float[] key - class name, value - coverage percentage
      */
-    private function getFilesCoverage(Project $project): array
+    private function getClassesCoverage(): array
     {
         $result = [];
 
-        $files = $project->getFiles();
-        foreach ($files as $file) {
-            $fileName = $file->getName();
-            $metrics = $file->getMetrics();
+        $classes = $this->project->getClasses();
+        foreach ($classes as $class) {
+            $className = $class->getName();
+            $metrics = $class->getMetrics();
 
             $coverage = $metrics->getCoverage();
             if ($coverage !== null) {
-                $result[$fileName] = $coverage;
+                $result[$className] = $coverage;
             }
         }
 

@@ -7,8 +7,13 @@ namespace VStelmakh\Covelyzer\Report;
 use VStelmakh\Covelyzer\Console\CovelyzerStyle;
 use VStelmakh\Covelyzer\Entity\Project;
 
-class FileCoverageReport implements ReportInterface
+class ClassCoverageReport implements ReportInterface
 {
+    /**
+     * @var Project
+     */
+    private $project;
+
     /**
      * @var float
      */
@@ -17,7 +22,7 @@ class FileCoverageReport implements ReportInterface
     /**
      * @var array&float[]
      */
-    private $smallCoverageFiles;
+    private $smallCoverageClasses;
 
     /**
      * @param Project $project
@@ -25,8 +30,9 @@ class FileCoverageReport implements ReportInterface
      */
     public function __construct(Project $project, float $minCoverage)
     {
+        $this->project = $project;
         $this->minCoverage = $minCoverage;
-        $this->smallCoverageFiles = $this->getFilesCoverageLessThan($project, $minCoverage);
+        $this->smallCoverageClasses = $this->getClassesCoverageLessThan($minCoverage);
     }
 
     /**
@@ -34,15 +40,15 @@ class FileCoverageReport implements ReportInterface
      */
     public function render(CovelyzerStyle $covelyzerStyle): void
     {
-        $isSuccess = empty($this->smallCoverageFiles);
-        $covelyzerStyle->title('File coverage', $isSuccess);
+        $isSuccess = empty($this->smallCoverageClasses);
+        $covelyzerStyle->title('Class coverage', $isSuccess);
         $covelyzerStyle->coverage(null, $this->minCoverage);
 
         if (!$isSuccess) {
-            $filesCoverage = $this->smallCoverageFiles;
+            $filesCoverage = $this->smallCoverageClasses;
             asort($filesCoverage);
 
-            $headers = ['File', 'Coverage'];
+            $headers = ['Class', 'Coverage'];
             $rows = [];
             foreach ($filesCoverage as $file => $coverage) {
                 $rows[] = [$file, $coverage];
@@ -57,26 +63,25 @@ class FileCoverageReport implements ReportInterface
      */
     public function isSuccess(): bool
     {
-        return empty($this->smallCoverageFiles);
+        return empty($this->smallCoverageClasses);
     }
 
     /**
-     * @param Project $project
      * @param float $minCoverage
-     * @return array&float[] key - filename, value - coverage percentage
+     * @return array&float[] key - class name, value - coverage percentage
      */
-    private function getFilesCoverageLessThan(Project $project, float $minCoverage): array
+    private function getClassesCoverageLessThan(float $minCoverage): array
     {
         $result = [];
 
-        $files = $project->getFiles();
-        foreach ($files as $file) {
-            $fileName = $file->getName();
-            $metrics = $file->getMetrics();
+        $classes = $this->project->getClasses();
+        foreach ($classes as $class) {
+            $className = $class->getName();
+            $metrics = $class->getMetrics();
 
             $coverage = $metrics->getCoverage();
             if ($coverage !== null && $coverage < $minCoverage) {
-                $result[$fileName] = $coverage;
+                $result[$className] = $coverage;
             }
         }
 
