@@ -102,7 +102,7 @@
             <xs:attribute name="type" use="required" type="construct"/>
             <xs:attribute name="name" type="xs:string"/>
             <xs:attribute name="complexity" type="xs:integer"/>
-            <xs:attribute name="crap" type="xs:integer"/>
+            <xs:attribute name="crap" type="xs:float"/>
             <xs:attribute name="count" type="xs:integer"/>
             <xs:attribute name="visibility" type="visibility"/>
         </xs:complexType>
