@@ -6,9 +6,12 @@ namespace VStelmakh\Covelyzer\Report;
 
 use VStelmakh\Covelyzer\Console\CovelyzerStyle;
 use VStelmakh\Covelyzer\Entity\Project;
+use VStelmakh\Covelyzer\Filter\ClassFilter;
 
 class ProjectCoverageReport implements ReportInterface
 {
+    private const CLASS_COUNT = 10;
+
     /**
      * @var Project
      */
@@ -38,13 +41,15 @@ class ProjectCoverageReport implements ReportInterface
         $metrics = $this->project->getMetrics();
         $covelyzerStyle->coverage($metrics->getCoverage(), $this->minCoverage);
 
-        $classesCoverage = $this->getClassesCoverage();
-        asort($classesCoverage);
+        $classes = $this->project->getClasses();
+        $filter = new ClassFilter($classes);
+        $filter->setLimit(self::CLASS_COUNT);
+        $lessCoveredClasses = $filter->getResult();
 
         $headers = ['Class', 'Coverage'];
         $rows = [];
-        foreach ($classesCoverage as $class => $coverage) {
-            $rows[] = [$class, $coverage];
+        foreach ($lessCoveredClasses as $class) {
+            $rows[] = [$class->getName(), $class->getMetrics()->getCoverage()];
         }
         $covelyzerStyle->newLine();
         $covelyzerStyle->table($headers, $rows);
@@ -58,26 +63,5 @@ class ProjectCoverageReport implements ReportInterface
         $metrics = $this->project->getMetrics();
         $coverage = $metrics->getCoverage();
         return $coverage >= $this->minCoverage;
-    }
-
-    /**
-     * @return array&float[] key - class name, value - coverage percentage
-     */
-    private function getClassesCoverage(): array
-    {
-        $result = [];
-
-        $classes = $this->project->getClasses();
-        foreach ($classes as $class) {
-            $className = $class->getName();
-            $metrics = $class->getMetrics();
-
-            $coverage = $metrics->getCoverage();
-            if ($coverage !== null) {
-                $result[$className] = $coverage;
-            }
-        }
-
-        return $result;
     }
 }

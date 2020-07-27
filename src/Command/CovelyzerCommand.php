@@ -53,7 +53,7 @@ class CovelyzerCommand extends Command
         $this->covelyzerStyle->title('Covelyzer');
         $this->covelyzerStyle->newLine();
         $minProjectCoverage = 100;
-        $minFileCoverage = 100;
+        $minClassCoverage = 100;
 
         $documentFactory = new DocumentFactory();
         $fileReader = new FileReader();
@@ -74,7 +74,7 @@ class CovelyzerCommand extends Command
 
         $reports = [
             new ProjectCoverageReport($project, $minProjectCoverage),
-            new ClassCoverageReport($project, $minFileCoverage),
+            new ClassCoverageReport($project, $minClassCoverage),
         ];
 
         /** @var ReportInterface $report */

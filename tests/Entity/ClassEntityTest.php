@@ -28,16 +28,16 @@ class ClassEntityTest extends TestCase
     {
         $this->domDocument = new \DOMDocument();
 
-        $file = $this->domDocument->createElement('class');
-        $file->setAttribute('name', self::NAME);
-        $file->setAttribute('namespace', self::NAMESPACE);
-        $this->domDocument->appendChild($file);
+        $class = $this->domDocument->createElement('class');
+        $class->setAttribute('name', self::NAME);
+        $class->setAttribute('namespace', self::NAMESPACE);
+        $this->domDocument->appendChild($class);
 
         $metrics = $this->domDocument->createElement('metrics');
-        $file->appendChild($metrics);
+        $class->appendChild($metrics);
 
         $domXpath = new \DOMXPath($this->domDocument);
-        $xpathElement = new XpathElement($domXpath, $file);
+        $xpathElement = new XpathElement($domXpath, $class);
 
         $this->class = new ClassEntity($xpathElement);
     }
@@ -45,13 +45,13 @@ class ClassEntityTest extends TestCase
     public function testGetName(): void
     {
         $actual = $this->class->getName();
-        $this->assertSame(self::NAME, $actual);
+        self::assertSame(self::NAME, $actual);
     }
 
     public function testGetNamespace(): void
     {
         $actual = $this->class->getNamespace();
-        $this->assertSame(self::NAMESPACE, $actual);
+        self::assertSame(self::NAMESPACE, $actual);
     }
 
     public function testGetMetrics(): void
@@ -63,6 +63,6 @@ class ClassEntityTest extends TestCase
         $metricsXpathElement = $this->class->getXpathElement()->createElement($metricsNode);
         $expected = new ClassMetrics($metricsXpathElement);
 
-        $this->assertEquals($expected, $actual);
+        self::assertEquals($expected, $actual);
     }
 }

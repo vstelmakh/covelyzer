@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace VStelmakh\Covelyzer\Report;
 
 use VStelmakh\Covelyzer\Console\CovelyzerStyle;
+use VStelmakh\Covelyzer\Entity\ClassEntity;
 use VStelmakh\Covelyzer\Entity\Project;
+use VStelmakh\Covelyzer\Filter\ClassFilter;
 
 class ClassCoverageReport implements ReportInterface
 {
@@ -20,7 +22,7 @@ class ClassCoverageReport implements ReportInterface
     private $minCoverage;
 
     /**
-     * @var array&float[]
+     * @var array&ClassEntity[]
      */
     private $smallCoverageClasses;
 
@@ -40,18 +42,15 @@ class ClassCoverageReport implements ReportInterface
      */
     public function render(CovelyzerStyle $covelyzerStyle): void
     {
-        $isSuccess = empty($this->smallCoverageClasses);
+        $isSuccess = $this->isSuccess();
         $covelyzerStyle->title('Class coverage', $isSuccess);
         $covelyzerStyle->coverage(null, $this->minCoverage);
 
         if (!$isSuccess) {
-            $filesCoverage = $this->smallCoverageClasses;
-            asort($filesCoverage);
-
             $headers = ['Class', 'Coverage'];
             $rows = [];
-            foreach ($filesCoverage as $file => $coverage) {
-                $rows[] = [$file, $coverage];
+            foreach ($this->smallCoverageClasses as $class) {
+                $rows[] = [$class->getName(), $class->getMetrics()->getCoverage()];
             }
             $covelyzerStyle->newLine();
             $covelyzerStyle->table($headers, $rows);
@@ -68,23 +67,13 @@ class ClassCoverageReport implements ReportInterface
 
     /**
      * @param float $minCoverage
-     * @return array&float[] key - class name, value - coverage percentage
+     * @return array&ClassEntity[]
      */
     private function getClassesCoverageLessThan(float $minCoverage): array
     {
-        $result = [];
-
         $classes = $this->project->getClasses();
-        foreach ($classes as $class) {
-            $className = $class->getName();
-            $metrics = $class->getMetrics();
-
-            $coverage = $metrics->getCoverage();
-            if ($coverage !== null && $coverage < $minCoverage) {
-                $result[$className] = $coverage;
-            }
-        }
-
-        return $result;
+        $filter = new ClassFilter($classes);
+        $filter->setCoverageBelow($minCoverage);
+        return $filter->getResult();
     }
 }
