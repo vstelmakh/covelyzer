@@ -14,8 +14,6 @@ use VStelmakh\Covelyzer\CoverageParser;
 use VStelmakh\Covelyzer\Report\ClassCoverageReport;
 use VStelmakh\Covelyzer\Report\ProjectCoverageReport;
 use VStelmakh\Covelyzer\Report\ReportInterface;
-use VStelmakh\Covelyzer\Util\FileReader;
-use VStelmakh\Covelyzer\Dom\DocumentFactory;
 
 class CovelyzerCommand extends Command
 {
@@ -26,6 +24,20 @@ class CovelyzerCommand extends Command
      * @var CovelyzerStyle
      */
     private $covelyzerStyle;
+
+    /**
+     * @var CoverageParser
+     */
+    private $coverageParser;
+
+    /**
+     * @param CoverageParser $coverageParser
+     */
+    public function __construct(CoverageParser $coverageParser)
+    {
+        $this->coverageParser = $coverageParser;
+        parent::__construct(null);
+    }
 
     protected function configure(): void
     {
@@ -56,16 +68,12 @@ class CovelyzerCommand extends Command
         $minProjectCoverage = 100;
         $minClassCoverage = 100;
 
-        $documentFactory = new DocumentFactory();
-        $fileReader = new FileReader();
-        $coverageParser = new CoverageParser($documentFactory, $fileReader);
-
         /** @var string $coverageFilePath */
         $coverageFilePath = $input->getArgument('coverage');
         /** @var string $coverageFilePath */
         $coverageFilePath = realpath($coverageFilePath);
         $this->covelyzerStyle->writeln('  Report:    ' . $coverageFilePath);
-        $project = $coverageParser->parseCoverage($coverageFilePath);
+        $project = $this->coverageParser->parseCoverage($coverageFilePath);
 
         $datetime = $project->getTimestamp();
         $displayDateTime = $datetime ? $datetime->format('Y-m-d H:i:s') : '--';

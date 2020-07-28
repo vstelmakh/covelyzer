@@ -3,6 +3,13 @@
 
 declare(strict_types=1);
 
+use Symfony\Component\Console\Application;
+use VStelmakh\Covelyzer\Command\CovelyzerCommand;
+use VStelmakh\Covelyzer\Command\HelpCommand;
+use VStelmakh\Covelyzer\CoverageParser;
+use VStelmakh\Covelyzer\Dom\DocumentFactory;
+use VStelmakh\Covelyzer\Util\FileReader;
+
 $autoloadPaths = [
     __DIR__ . '/../../../autoload.php',
     __DIR__ . '/../vendor/autoload.php',
@@ -14,12 +21,16 @@ foreach ($autoloadPaths as $path) {
     }
 }
 
-$application = new Symfony\Component\Console\Application('Covelyzer', '0.1.0');
+$documentFactory = new DocumentFactory();
+$fileReader = new FileReader();
+$coverageParser = new CoverageParser($documentFactory, $fileReader);
 
-$command = new VStelmakh\Covelyzer\Command\CovelyzerCommand();
+$application = new Application('Covelyzer', '0.1.0');
+
+$command = new CovelyzerCommand($coverageParser);
 $application->add($command);
 
-$helpCommand = new VStelmakh\Covelyzer\Command\HelpCommand();
+$helpCommand = new HelpCommand();
 $application->add($helpCommand);
 
 $application->setDefaultCommand($command->getName(), true);
