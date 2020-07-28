@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace VStelmakh\Covelyzer\Report;
 
+use VStelmakh\Covelyzer\Console\ClassCoverageTableRenderer;
 use VStelmakh\Covelyzer\Console\CovelyzerStyle;
 use VStelmakh\Covelyzer\Entity\ClassEntity;
 use VStelmakh\Covelyzer\Entity\Project;
@@ -27,14 +28,24 @@ class ClassCoverageReport implements ReportInterface
     private $smallCoverageClasses;
 
     /**
+     * @var ClassCoverageTableRenderer
+     */
+    private $tableRenderer;
+
+    /**
      * @param Project $project
      * @param float $minCoverage
+     * @param ClassCoverageTableRenderer $classCoverageTableRenderer
      */
-    public function __construct(Project $project, float $minCoverage)
-    {
+    public function __construct(
+        Project $project,
+        float $minCoverage,
+        ClassCoverageTableRenderer $classCoverageTableRenderer
+    ) {
         $this->project = $project;
         $this->minCoverage = $minCoverage;
         $this->smallCoverageClasses = $this->getClassesCoverageLessThan($minCoverage);
+        $this->tableRenderer = $classCoverageTableRenderer;
     }
 
     /**
@@ -47,13 +58,8 @@ class ClassCoverageReport implements ReportInterface
         $covelyzerStyle->coverage(null, $this->minCoverage);
 
         if (!$isSuccess) {
-            $headers = ['Class', 'Coverage'];
-            $rows = [];
-            foreach ($this->smallCoverageClasses as $class) {
-                $rows[] = [$class->getName(), $class->getMetrics()->getCoverage()];
-            }
             $covelyzerStyle->newLine();
-            $covelyzerStyle->table($headers, $rows);
+            $this->tableRenderer->render($covelyzerStyle, $this->smallCoverageClasses);
         }
     }
 

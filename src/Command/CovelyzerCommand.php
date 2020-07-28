@@ -8,6 +8,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use VStelmakh\Covelyzer\Console\ClassCoverageTableRenderer;
 use VStelmakh\Covelyzer\Console\CovelyzerStyle;
 use VStelmakh\Covelyzer\CoverageParser;
 use VStelmakh\Covelyzer\Report\ClassCoverageReport;
@@ -72,9 +73,10 @@ class CovelyzerCommand extends Command
 
         $status = self::SUCCESS;
 
+        $tableRenderer = new ClassCoverageTableRenderer();
         $reports = [
-            new ProjectCoverageReport($project, $minProjectCoverage),
-            new ClassCoverageReport($project, $minClassCoverage),
+            new ProjectCoverageReport($project, $minProjectCoverage, $tableRenderer),
+            new ClassCoverageReport($project, $minClassCoverage, $tableRenderer),
         ];
 
         /** @var ReportInterface $report */

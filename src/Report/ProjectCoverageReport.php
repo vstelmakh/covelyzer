@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace VStelmakh\Covelyzer\Report;
 
+use VStelmakh\Covelyzer\Console\ClassCoverageTableRenderer;
 use VStelmakh\Covelyzer\Console\CovelyzerStyle;
+use VStelmakh\Covelyzer\Entity\ClassEntity;
 use VStelmakh\Covelyzer\Entity\Project;
 use VStelmakh\Covelyzer\Filter\ClassFilter;
 
@@ -23,13 +25,23 @@ class ProjectCoverageReport implements ReportInterface
     private $minCoverage;
 
     /**
+     * @var ClassCoverageTableRenderer
+     */
+    private $tableRenderer;
+
+    /**
      * @param Project $project
      * @param float $minCoverage
+     * @param ClassCoverageTableRenderer $classCoverageTableRenderer
      */
-    public function __construct(Project $project, float $minCoverage)
-    {
+    public function __construct(
+        Project $project,
+        float $minCoverage,
+        ClassCoverageTableRenderer $classCoverageTableRenderer
+    ) {
         $this->project = $project;
         $this->minCoverage = $minCoverage;
+        $this->tableRenderer = $classCoverageTableRenderer;
     }
 
     /**
@@ -41,18 +53,10 @@ class ProjectCoverageReport implements ReportInterface
         $metrics = $this->project->getMetrics();
         $covelyzerStyle->coverage($metrics->getCoverage(), $this->minCoverage);
 
-        $classes = $this->project->getClasses();
-        $filter = new ClassFilter($classes);
-        $filter->setLimit(self::CLASS_COUNT);
-        $lessCoveredClasses = $filter->getResult();
+        $leastCoveredClasses = $this->getLeastCoveredClasses();
 
-        $headers = ['Class', 'Coverage'];
-        $rows = [];
-        foreach ($lessCoveredClasses as $class) {
-            $rows[] = [$class->getName(), $class->getMetrics()->getCoverage()];
-        }
         $covelyzerStyle->newLine();
-        $covelyzerStyle->table($headers, $rows);
+        $this->tableRenderer->render($covelyzerStyle, $leastCoveredClasses);
     }
 
     /**
@@ -63,5 +67,16 @@ class ProjectCoverageReport implements ReportInterface
         $metrics = $this->project->getMetrics();
         $coverage = $metrics->getCoverage();
         return $coverage >= $this->minCoverage;
+    }
+
+    /**
+     * @return array&ClassEntity[]
+     */
+    private function getLeastCoveredClasses(): array
+    {
+        $classes = $this->project->getClasses();
+        $filter = new ClassFilter($classes);
+        $filter->setLimit(self::CLASS_COUNT);
+        return $filter->getResult();
     }
 }
