@@ -8,6 +8,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use VStelmakh\Covelyzer\Parser\ConfigParser;
 use VStelmakh\Covelyzer\Console\ClassCoverageTableRenderer;
 use VStelmakh\Covelyzer\Console\CovelyzerStyle;
 use VStelmakh\Covelyzer\CoverageParser;
@@ -26,15 +27,22 @@ class CovelyzerCommand extends Command
     private $covelyzerStyle;
 
     /**
+     * @var ConfigParser
+     */
+    private $configParser;
+
+    /**
      * @var CoverageParser
      */
     private $coverageParser;
 
     /**
+     * @param ConfigParser $configParser
      * @param CoverageParser $coverageParser
      */
-    public function __construct(CoverageParser $coverageParser)
+    public function __construct(ConfigParser $configParser, CoverageParser $coverageParser)
     {
+        $this->configParser = $configParser;
         $this->coverageParser = $coverageParser;
         parent::__construct(null);
     }
@@ -65,8 +73,10 @@ class CovelyzerCommand extends Command
     {
         $this->covelyzerStyle->title('Covelyzer');
         $this->covelyzerStyle->newLine();
-        $minProjectCoverage = 100;
-        $minClassCoverage = 100;
+
+        $config = $this->configParser->parseConfig('covelyzer.xml');
+        $minProjectCoverage = $config->getMinProjectCoverage();
+        $minClassCoverage = $config->getMinClassCoverage();
 
         /** @var string $coverageFilePath */
         $coverageFilePath = $input->getArgument('coverage');
