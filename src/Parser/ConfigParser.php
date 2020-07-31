@@ -52,8 +52,11 @@ class ConfigParser
      */
     private function getConfig(\DOMXPath $domXpath): Config
     {
+        /** @var \DOMNodeList<\DOMElement> $covelyzerNodeList */
+        $covelyzerNodeList = $domXpath->query('//covelyzer');
+
         /** @var \DOMElement|null $covelyzerElement */
-        $covelyzerElement = $domXpath->query('//covelyzer')->item(0);
+        $covelyzerElement = $covelyzerNodeList->item(0);
 
         if ($covelyzerElement === null) {
             throw new \RuntimeException('XML parse error. Covelyzer node not found');

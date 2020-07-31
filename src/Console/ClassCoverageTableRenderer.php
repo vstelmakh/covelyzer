@@ -24,7 +24,7 @@ class ClassCoverageTableRenderer
 
     /**
      * @param ClassEntity $class
-     * @return array&string[]
+     * @return array<int|float|string|null>
      */
     private function buildRow(ClassEntity $class): array
     {

@@ -8,10 +8,12 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use VStelmakh\Covelyzer\Entity\Config;
+use VStelmakh\Covelyzer\Entity\Project;
 use VStelmakh\Covelyzer\Parser\ConfigParser;
 use VStelmakh\Covelyzer\Console\ClassCoverageTableRenderer;
 use VStelmakh\Covelyzer\Console\CovelyzerStyle;
-use VStelmakh\Covelyzer\CoverageParser;
+use VStelmakh\Covelyzer\Parser\CoverageParser;
 use VStelmakh\Covelyzer\Report\ClassCoverageReport;
 use VStelmakh\Covelyzer\Report\ProjectCoverageReport;
 use VStelmakh\Covelyzer\Report\ReportInterface;
@@ -75,8 +77,6 @@ class CovelyzerCommand extends Command
         $this->covelyzerStyle->newLine();
 
         $config = $this->configParser->parseConfig('covelyzer.xml');
-        $minProjectCoverage = $config->getMinProjectCoverage();
-        $minClassCoverage = $config->getMinClassCoverage();
 
         /** @var string $coverageFilePath */
         $coverageFilePath = $input->getArgument('coverage');
@@ -89,22 +89,50 @@ class CovelyzerCommand extends Command
         $displayDateTime = $datetime ? $datetime->format('Y-m-d H:i:s') : '--';
         $this->covelyzerStyle->writeln('  Timestamp: ' . $displayDateTime);
 
+        $reports = $this->initReports($project, $config);
+        $status = $this->renderReports($reports);
+
+        $this->covelyzerStyle->status($status);
+        return $status;
+    }
+
+    /**
+     * @param Project $project
+     * @param Config $config
+     * @return array&ReportInterface[]
+     */
+    private function initReports(Project $project, Config $config): array
+    {
+        $reports = [];
+        $tableRenderer = new ClassCoverageTableRenderer();
+
+        $minProjectCoverage = $config->getMinProjectCoverage();
+        if ($minProjectCoverage !== null) {
+            $reports[] = new ProjectCoverageReport($project, $minProjectCoverage, $tableRenderer);
+        }
+
+        $minClassCoverage = $config->getMinClassCoverage();
+        if ($minClassCoverage !== null) {
+            $reports[] = new ClassCoverageReport($project, $minClassCoverage, $tableRenderer);
+        }
+
+        return $reports;
+    }
+
+    /**
+     * @param array&ReportInterface[] $reports
+     * @return int
+     */
+    private function renderReports(array $reports): int
+    {
         $status = self::SUCCESS;
 
-        $tableRenderer = new ClassCoverageTableRenderer();
-        $reports = [
-            new ProjectCoverageReport($project, $minProjectCoverage, $tableRenderer),
-            new ClassCoverageReport($project, $minClassCoverage, $tableRenderer),
-        ];
-
-        /** @var ReportInterface $report */
         foreach ($reports as $report) {
             $this->covelyzerStyle->newLine();
             $report->render($this->covelyzerStyle);
             $status = $report->isSuccess() === false ? self::FAILURE : $status;
         }
 
-        $this->covelyzerStyle->status($status);
         return $status;
     }
 }

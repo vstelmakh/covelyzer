@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace VStelmakh\Covelyzer;
+namespace VStelmakh\Covelyzer\Parser;
 
 use VStelmakh\Covelyzer\Entity\Project;
 use VStelmakh\Covelyzer\Util\FileReader;
@@ -11,7 +11,7 @@ use VStelmakh\Covelyzer\Dom\XpathElement;
 
 class CoverageParser
 {
-    private const XSD_PATH = __DIR__ . '/../resources/clover-phpunit.xsd';
+    private const XSD_PATH = __DIR__ . '/../../resources/clover-phpunit.xsd';
 
     /**
      * @var DocumentFactory

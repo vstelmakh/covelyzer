@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace VStelmakh\Covelyzer\Tests;
+namespace VStelmakh\Covelyzer\Tests\Parser;
 
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use VStelmakh\Covelyzer\CoverageParser;
+use VStelmakh\Covelyzer\Parser\CoverageParser;
 use VStelmakh\Covelyzer\Entity\Project;
 use VStelmakh\Covelyzer\Util\FileReader;
 use VStelmakh\Covelyzer\Dom\DocumentFactory;
@@ -27,9 +27,9 @@ class CoverageParserTest extends TestCase
         /** @var FileReader&MockObject $fileReader */
         $fileReader = $this->createMock(FileReader::class);
         $fileReader
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('getContents')
-            ->with($this->identicalTo($filePath));
+            ->with(self::identicalTo($filePath));
 
         $domDocument = new \DOMDocument();
 
@@ -44,7 +44,7 @@ class CoverageParserTest extends TestCase
         /** @var DocumentFactory&MockObject $documentFactory */
         $documentFactory = $this->createMock(DocumentFactory::class);
         $documentFactory
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('createDocument')
             ->willReturn($domDocument);
 
@@ -59,7 +59,7 @@ class CoverageParserTest extends TestCase
         $xpathElement = new XpathElement($domXpath, $element);
         $expected = new Project($xpathElement);
 
-        $this->assertEquals($expected, $actual);
+        self::assertEquals($expected, $actual);
     }
 
     /**
