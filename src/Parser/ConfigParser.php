@@ -11,8 +11,7 @@ use VStelmakh\Covelyzer\Util\FileReader;
 
 class ConfigParser
 {
-    // TODO: add xsd
-    private const XSD_PATH = null;
+    private const XSD_PATH = __DIR__ . '/../../resources/covelyzer-config.xsd';
 
     /**
      * @var DocumentFactory

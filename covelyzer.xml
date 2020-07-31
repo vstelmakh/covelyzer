@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <covelyzer
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="https://github.com/vstelmakh/covelyzer/tree/master/resources/covelyzer-config.xsd"
+    xsi:noNamespaceSchemaLocation="resources/covelyzer-config.xsd"
 
     minProjectCoverage="100"
     minClassCoverage="100"

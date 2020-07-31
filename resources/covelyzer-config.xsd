@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+    <xs:element name="covelyzer">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:any minOccurs="0"/>
+            </xs:sequence>
+            <xs:attribute name="minProjectCoverage" type="percent" use="optional"/>
+            <xs:attribute name="minClassCoverage" type="percent" use="optional"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:simpleType name="percent">
+        <xs:restriction base="xs:float">
+            <xs:minInclusive value="0"/>
+            <xs:maxInclusive value="100"/>
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>
