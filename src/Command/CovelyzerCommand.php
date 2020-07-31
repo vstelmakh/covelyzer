@@ -22,6 +22,7 @@ class CovelyzerCommand extends Command
 {
     public const SUCCESS = 0;
     public const FAILURE = 1;
+    private const ARG_COVERAGE = 'coverage';
 
     /**
      * @var CovelyzerStyle
@@ -52,7 +53,7 @@ class CovelyzerCommand extends Command
     protected function configure(): void
     {
         $this->setName('covelyzer');
-        $this->addArgument('coverage', InputArgument::REQUIRED, 'Path to coverage report file .xml');
+        $this->addArgument(self::ARG_COVERAGE, InputArgument::REQUIRED, 'Path to coverage report file .xml');
         $this->addUsage('path/to/coverage.xml');
     }
 
@@ -78,22 +79,45 @@ class CovelyzerCommand extends Command
 
         $config = $this->configParser->parseConfig('covelyzer.xml');
 
-        /** @var string $coverageFilePath */
-        $coverageFilePath = $input->getArgument('coverage');
-        /** @var string $coverageFilePath */
-        $coverageFilePath = realpath($coverageFilePath);
-        $this->covelyzerStyle->writeln('  Report:    ' . $coverageFilePath);
+        $coverageFilePath = $this->getCoverageFilePath($input);
         $project = $this->coverageParser->parseCoverage($coverageFilePath);
-
-        $datetime = $project->getTimestamp();
-        $displayDateTime = $datetime ? $datetime->format('Y-m-d H:i:s') : '--';
-        $this->covelyzerStyle->writeln('  Timestamp: ' . $displayDateTime);
+        $this->renderCoverageSummary($coverageFilePath, $project);
 
         $reports = $this->initReports($project, $config);
         $status = $this->renderReports($reports);
 
         $this->covelyzerStyle->status($status);
         return $status;
+    }
+
+    /**
+     * @param InputInterface $input
+     * @return string
+     */
+    private function getCoverageFilePath(InputInterface $input): string
+    {
+        /** @var string $filePath */
+        $filePath = $input->getArgument(self::ARG_COVERAGE);
+        $realPath = realpath($filePath);
+
+        if ($realPath === false) {
+            throw new \RuntimeException(sprintf('Unable to resolve coverage path "%s"', $filePath));
+        }
+
+        return $realPath;
+    }
+
+    /**
+     * @param string $coverageFilePath
+     * @param Project $project
+     */
+    private function renderCoverageSummary(string $coverageFilePath, Project $project): void
+    {
+        $this->covelyzerStyle->writeln('  Report:    ' . $coverageFilePath);
+
+        $datetime = $project->getTimestamp();
+        $displayDateTime = $datetime ? $datetime->format('Y-m-d H:i:s') : '--';
+        $this->covelyzerStyle->writeln('  Timestamp: ' . $displayDateTime);
     }
 
     /**
