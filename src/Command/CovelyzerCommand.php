@@ -8,6 +8,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use VStelmakh\Covelyzer\Util\ConfigLocator;
 use VStelmakh\Covelyzer\Entity\Config;
 use VStelmakh\Covelyzer\Entity\Project;
 use VStelmakh\Covelyzer\Parser\ConfigParser;
@@ -30,6 +31,11 @@ class CovelyzerCommand extends Command
     private $covelyzerStyle;
 
     /**
+     * @var ConfigLocator
+     */
+    private $configLocator;
+
+    /**
      * @var ConfigParser
      */
     private $configParser;
@@ -40,11 +46,16 @@ class CovelyzerCommand extends Command
     private $coverageParser;
 
     /**
+     * @param ConfigLocator $configLocator
      * @param ConfigParser $configParser
      * @param CoverageParser $coverageParser
      */
-    public function __construct(ConfigParser $configParser, CoverageParser $coverageParser)
-    {
+    public function __construct(
+        ConfigLocator $configLocator,
+        ConfigParser $configParser,
+        CoverageParser $coverageParser
+    ) {
+        $this->configLocator = $configLocator;
         $this->configParser = $configParser;
         $this->coverageParser = $coverageParser;
         parent::__construct(null);
@@ -77,11 +88,12 @@ class CovelyzerCommand extends Command
         $this->covelyzerStyle->title('Covelyzer');
         $this->covelyzerStyle->newLine();
 
-        $config = $this->configParser->parseConfig('covelyzer.xml');
+        $configPath = $this->configLocator->getConfigPath();
+        $config = $this->configParser->parseConfig($configPath);
 
         $coverageFilePath = $this->getCoverageFilePath($input);
         $project = $this->coverageParser->parseCoverage($coverageFilePath);
-        $this->renderCoverageSummary($coverageFilePath, $project);
+        $this->renderCoverageSummary($configPath, $coverageFilePath, $project);
 
         $reports = $this->initReports($project, $config);
         $status = $this->renderReports($reports);
@@ -108,11 +120,13 @@ class CovelyzerCommand extends Command
     }
 
     /**
+     * @param string $configFilePath
      * @param string $coverageFilePath
      * @param Project $project
      */
-    private function renderCoverageSummary(string $coverageFilePath, Project $project): void
+    private function renderCoverageSummary(string $configFilePath, string $coverageFilePath, Project $project): void
     {
+        $this->covelyzerStyle->writeln('  Config:    ' . $configFilePath);
         $this->covelyzerStyle->writeln('  Report:    ' . $coverageFilePath);
 
         $datetime = $project->getTimestamp();

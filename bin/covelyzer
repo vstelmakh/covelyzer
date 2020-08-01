@@ -6,6 +6,7 @@ declare(strict_types=1);
 use Symfony\Component\Console\Application;
 use VStelmakh\Covelyzer\Command\CovelyzerCommand;
 use VStelmakh\Covelyzer\Command\HelpCommand;
+use VStelmakh\Covelyzer\Util\ConfigLocator;
 use VStelmakh\Covelyzer\Parser\ConfigParser;
 use VStelmakh\Covelyzer\Parser\CoverageParser;
 use VStelmakh\Covelyzer\Dom\DocumentFactory;
@@ -22,6 +23,7 @@ foreach ($autoloadPaths as $path) {
     }
 }
 
+$configLocator = new ConfigLocator();
 $documentFactory = new DocumentFactory();
 $fileReader = new FileReader();
 $configParser = new ConfigParser($documentFactory, $fileReader);
@@ -29,7 +31,7 @@ $coverageParser = new CoverageParser($documentFactory, $fileReader);
 
 $application = new Application('Covelyzer', '0.1.0');
 
-$command = new CovelyzerCommand($configParser, $coverageParser);
+$command = new CovelyzerCommand($configLocator, $configParser, $coverageParser);
 $application->add($command);
 
 $helpCommand = new HelpCommand();
