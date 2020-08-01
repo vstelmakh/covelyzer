@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace VStelmakh\Covelyzer\Tests\Entity;
 
 use VStelmakh\Covelyzer\Entity\AbstractEntity;

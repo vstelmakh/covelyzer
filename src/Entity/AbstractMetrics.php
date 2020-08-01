@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace VStelmakh\Covelyzer\Entity;
 
 use VStelmakh\Covelyzer\Dom\XpathElement;

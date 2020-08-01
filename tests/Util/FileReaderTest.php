@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace VStelmakh\Covelyzer\Tests\Util;
 
 use VStelmakh\Covelyzer\Util\FileReader;
