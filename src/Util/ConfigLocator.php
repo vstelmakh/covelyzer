@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace VStelmakh\Covelyzer\Util;
 
+use VStelmakh\Covelyzer\App;
+
 class ConfigLocator
 {
     private const PATHS = [
-        __DIR__ . '/../../../../../covelyzer.xml', // project root config
-        __DIR__ . '/../../covelyzer.xml', // default config
+        App::ROOT_DIR . '/../../../covelyzer.xml', // project root config
+        App::ROOT_DIR . '/covelyzer.xml', // default config
     ];
 
     /**

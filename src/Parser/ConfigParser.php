@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace VStelmakh\Covelyzer\Parser;
 
+use VStelmakh\Covelyzer\App;
 use VStelmakh\Covelyzer\Dom\DocumentFactory;
 use VStelmakh\Covelyzer\Dom\XpathElement;
 use VStelmakh\Covelyzer\Entity\Config;
@@ -11,7 +12,7 @@ use VStelmakh\Covelyzer\Util\FileReader;
 
 class ConfigParser
 {
-    private const XSD_PATH = __DIR__ . '/../../resources/covelyzer-config.xsd';
+    private const XSD_PATH = App::ROOT_DIR . '/resources/covelyzer-config.xsd';
 
     /**
      * @var DocumentFactory
