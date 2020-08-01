@@ -21,8 +21,8 @@ class Config extends AbstractEntity
      */
     public function getMinProjectCoverage(): ?float
     {
-        $minProjectCoverage = $this->getXpathElement()->getAttribute('minProjectCoverage');
-        return $minProjectCoverage !== null ? (float) $minProjectCoverage : null;
+        $minCoverage = $this->getChildAttribute('project', 'minCoverage');
+        return $minCoverage !== null ? (float) $minCoverage : null;
     }
 
     /**
@@ -30,7 +30,24 @@ class Config extends AbstractEntity
      */
     public function getMinClassCoverage(): ?float
     {
-        $minProjectCoverage = $this->getXpathElement()->getAttribute('minClassCoverage');
-        return $minProjectCoverage !== null ? (float) $minProjectCoverage : null;
+        $minCoverage = $this->getChildAttribute('class', 'minCoverage');
+        return $minCoverage !== null ? (float) $minCoverage : null;
+    }
+
+    /**
+     * @param string $nodeName
+     * @param string $attributeName
+     * @return string|null
+     */
+    private function getChildAttribute(string $nodeName, string $attributeName): ?string
+    {
+        /** @var \DOMElement|null $node */
+        $node = $this->getXpathElement()->xpath($nodeName)->item(0);
+        if ($node === null) {
+            return null;
+        }
+
+        $element = $this->getXpathElement()->createElement($node);
+        return $element->getAttribute($attributeName);
     }
 }

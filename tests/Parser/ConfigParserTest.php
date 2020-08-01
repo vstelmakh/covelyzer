@@ -14,23 +14,31 @@ use VStelmakh\Covelyzer\Util\FileReader;
 
 class ConfigParserTest extends TestCase
 {
+    private const NAME = 'name';
+    private const ATTRIBUTES = 'attributes';
+
     /**
      * @dataProvider parseConfigDataProvider
      *
-     * @param string|null $attributeName
-     * @param mixed $attributeValue
+     * @param array&array[] $nodes
      * @param bool $expectException
      */
-    public function testParseConfig(?string $attributeName, $attributeValue, bool $expectException): void
+    public function testParseConfig(array $nodes, bool $expectException): void
     {
         $filePath = 'path/to/covelyzer.xml';
 
         $domDocument = new \DOMDocument();
         $rootElement = $domDocument->createElement('covelyzer');
         $domDocument->appendChild($rootElement);
-        if ($attributeName !== null) {
-            $rootElement->setAttribute($attributeName, $attributeValue);
+
+        foreach ($nodes as $node) {
+            $element = $domDocument->createElement($node[self::NAME]);
+            $rootElement->appendChild($element);
+            foreach ($node[self::ATTRIBUTES] as $attribute => $value) {
+                $element->setAttribute($attribute, $value);
+            }
         }
+
         $xml = $domDocument->saveXML();
 
         /** @var FileReader&MockObject $fileReader */
@@ -62,20 +70,142 @@ class ConfigParserTest extends TestCase
     public function parseConfigDataProvider(): array
     {
         return [
-            ['minProjectCoverage', '0', false],
-            ['minProjectCoverage', '100', false],
-            ['minProjectCoverage', '-1', true],
-            ['minProjectCoverage', '101', true],
-            ['minProjectCoverage', 'string', true],
+            'no nodes' => [
+                [],
+                false
+            ],
+            'unknown node' => [
+                [
+                    [
+                        self::NAME => 'unknown',
+                        self::ATTRIBUTES => [],
+                    ],
+                ],
+                true
+            ],
+            'unknown attribute' => [
+                [
+                    [
+                        self::NAME => 'project',
+                        self::ATTRIBUTES => ['unknown' => '100'],
+                    ],
+                ],
+                true
+            ],
 
-            ['minClassCoverage', '0', false],
-            ['minClassCoverage', '100', false],
-            ['minClassCoverage', '-1', true],
-            ['minClassCoverage', '101', true],
-            ['minClassCoverage', 'string', true],
+            'project only' => [
+                [
+                    [
+                        self::NAME => 'project',
+                        self::ATTRIBUTES => ['minCoverage' => '100'],
+                    ],
+                ],
+                false
+            ],
+            'class only' => [
+                [
+                    [
+                        self::NAME => 'class',
+                        self::ATTRIBUTES => ['minCoverage' => '100'],
+                    ],
+                ],
+                false
+            ],
+            'project and class' => [
+                [
+                    [
+                        self::NAME => 'project',
+                        self::ATTRIBUTES => ['minCoverage' => '100'],
+                    ],
+                    [
+                        self::NAME => 'class',
+                        self::ATTRIBUTES => ['minCoverage' => '100'],
+                    ],
+                ],
+                false
+            ],
+            'project and project' => [
+                [
+                    [
+                        self::NAME => 'project',
+                        self::ATTRIBUTES => ['minCoverage' => '100'],
+                    ],
+                    [
+                        self::NAME => 'project',
+                        self::ATTRIBUTES => ['minCoverage' => '100'],
+                    ],
+                ],
+                true
+            ],
+            'class and class' => [
+                [
+                    [
+                        self::NAME => 'class',
+                        self::ATTRIBUTES => ['minCoverage' => '100'],
+                    ],
+                    [
+                        self::NAME => 'class',
+                        self::ATTRIBUTES => ['minCoverage' => '100'],
+                    ],
+                ],
+                true
+            ],
 
-            [null, null, false],
-            ['unknownAttribute', 'string', true],
+            'project minCoverage -1' => [
+                [
+                    [
+                        self::NAME => 'project',
+                        self::ATTRIBUTES => ['minCoverage' => '-1'],
+                    ],
+                ],
+                true
+            ],
+            'project minCoverage 101' => [
+                [
+                    [
+                        self::NAME => 'project',
+                        self::ATTRIBUTES => ['minCoverage' => '101'],
+                    ],
+                ],
+                true
+            ],
+            'project minCoverage string' => [
+                [
+                    [
+                        self::NAME => 'project',
+                        self::ATTRIBUTES => ['minCoverage' => 'string'],
+                    ],
+                ],
+                true
+            ],
+
+            'class minCoverage -1' => [
+                [
+                    [
+                        self::NAME => 'class',
+                        self::ATTRIBUTES => ['minCoverage' => '-1'],
+                    ],
+                ],
+                true
+            ],
+            'class minCoverage 101' => [
+                [
+                    [
+                        self::NAME => 'class',
+                        self::ATTRIBUTES => ['minCoverage' => '101'],
+                    ],
+                ],
+                true
+            ],
+            'class minCoverage string' => [
+                [
+                    [
+                        self::NAME => 'class',
+                        self::ATTRIBUTES => ['minCoverage' => 'string'],
+                    ],
+                ],
+                true
+            ],
         ];
     }
 }

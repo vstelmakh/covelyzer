@@ -24,13 +24,19 @@ class ConfigTest extends TestCase
     {
         $this->domDocument = new \DOMDocument();
 
-        $configElement = $this->domDocument->createElement('covelyzer');
-        $configElement->setAttribute('minProjectCoverage', '1');
-        $configElement->setAttribute('minClassCoverage', '2');
-        $this->domDocument->appendChild($configElement);
+        $rootElement = $this->domDocument->createElement('covelyzer');
+        $this->domDocument->appendChild($rootElement);
+
+        $projectElement = $this->domDocument->createElement('project');
+        $projectElement->setAttribute('minCoverage', '1');
+        $rootElement->appendChild($projectElement);
+
+        $classElement = $this->domDocument->createElement('class');
+        $classElement->setAttribute('minCoverage', '2');
+        $rootElement->appendChild($classElement);
 
         $domXpath = new \DOMXPath($this->domDocument);
-        $xpathElement = new XpathElement($domXpath, $configElement);
+        $xpathElement = new XpathElement($domXpath, $rootElement);
 
         $this->config = new Config($xpathElement);
     }

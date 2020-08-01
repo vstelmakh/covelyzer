@@ -2,11 +2,19 @@
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
     <xs:element name="covelyzer">
         <xs:complexType>
-            <xs:sequence>
-                <xs:any minOccurs="0"/>
-            </xs:sequence>
-            <xs:attribute name="minProjectCoverage" type="percent" use="optional"/>
-            <xs:attribute name="minClassCoverage" type="percent" use="optional"/>
+            <xs:all>
+                <xs:element name="project" minOccurs="0" maxOccurs="1">
+                    <xs:complexType>
+                        <xs:attribute name="minCoverage" type="percent" use="required"/>
+                    </xs:complexType>
+                </xs:element>
+
+                <xs:element name="class" minOccurs="0" maxOccurs="1">
+                    <xs:complexType>
+                        <xs:attribute name="minCoverage" type="percent" use="required"/>
+                    </xs:complexType>
+                </xs:element>
+            </xs:all>
         </xs:complexType>
     </xs:element>
 
