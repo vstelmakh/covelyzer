@@ -16,6 +16,11 @@ class ConfigTest extends TestCase
     private $domDocument;
 
     /**
+     * @var \DOMElement
+     */
+    private $rootElement;
+
+    /**
      * @var Config
      */
     private $config;
@@ -24,32 +29,59 @@ class ConfigTest extends TestCase
     {
         $this->domDocument = new \DOMDocument();
 
-        $rootElement = $this->domDocument->createElement('covelyzer');
-        $this->domDocument->appendChild($rootElement);
-
-        $projectElement = $this->domDocument->createElement('project');
-        $projectElement->setAttribute('minCoverage', '1');
-        $rootElement->appendChild($projectElement);
-
-        $classElement = $this->domDocument->createElement('class');
-        $classElement->setAttribute('minCoverage', '2');
-        $rootElement->appendChild($classElement);
+        $this->rootElement = $this->domDocument->createElement('covelyzer');
+        $this->domDocument->appendChild($this->rootElement);
 
         $domXpath = new \DOMXPath($this->domDocument);
-        $xpathElement = new XpathElement($domXpath, $rootElement);
+        $xpathElement = new XpathElement($domXpath, $this->rootElement);
 
         $this->config = new Config($xpathElement);
     }
 
-    public function testGetMinProjectCoverage(): void
+    /**
+     * @dataProvider getMinCoverageDataProvider
+     *
+     * @param bool $isElementExist
+     * @param float|null $minCoverage
+     */
+    public function testGetMinProjectCoverage(bool $isElementExist, ?float $minCoverage): void
     {
+        if ($isElementExist) {
+            $projectElement = $this->domDocument->createElement('project');
+            $projectElement->setAttribute('minCoverage', (string) $minCoverage);
+            $this->rootElement->appendChild($projectElement);
+        }
+
         $actual = $this->config->getMinProjectCoverage();
-        self::assertSame(1.0, $actual);
+        self::assertSame($minCoverage, $actual);
     }
 
-    public function testGetMinClassCoverage(): void
+    /**
+     * @dataProvider getMinCoverageDataProvider
+     *
+     * @param bool $isElementExist
+     * @param float|null $minCoverage
+     */
+    public function testGetMinClassCoverage(bool $isElementExist, ?float $minCoverage): void
     {
+        if ($isElementExist) {
+            $projectElement = $this->domDocument->createElement('class');
+            $projectElement->setAttribute('minCoverage', (string) $minCoverage);
+            $this->rootElement->appendChild($projectElement);
+        }
+
         $actual = $this->config->getMinClassCoverage();
-        self::assertSame(2.0, $actual);
+        self::assertSame($minCoverage, $actual);
+    }
+
+    /**
+     * @return array[]
+     */
+    public function getMinCoverageDataProvider(): array
+    {
+        return [
+            [true, 100],
+            [false, null],
+        ];
     }
 }
