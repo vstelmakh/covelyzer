@@ -47,7 +47,7 @@ class FileTest extends TestCase
     public function testGetName(): void
     {
         $actual = $this->file->getName();
-        $this->assertSame(self::FILENAME, $actual);
+        self::assertSame(self::FILENAME, $actual);
     }
 
     public function testGetMetrics(): void
@@ -59,7 +59,7 @@ class FileTest extends TestCase
         $metricsXpathElement = $this->file->getXpathElement()->createElement($metricsNode);
         $expected = new FileMetrics($metricsXpathElement);
 
-        $this->assertEquals($expected, $actual);
+        self::assertEquals($expected, $actual);
     }
 
     public function testGetClasses(): void
@@ -70,19 +70,8 @@ class FileTest extends TestCase
         $classNode = $this->domDocument->getElementsByTagName('class')->item(0);
         $classXpathElement = $this->file->getXpathElement()->createElement($classNode);
         $class = new ClassEntity($classXpathElement);
-        $expected = $this->getGenerator([$class]);
+        $expected = [$class];
 
-        $this->assertEquals($expected, $actual);
-    }
-
-    /**
-     * @param array|mixed[] $array
-     * @return \Generator|mixed[]
-     */
-    private function getGenerator(array $array): \Generator
-    {
-        foreach ($array as $item) {
-            yield $item;
-        }
+        self::assertEquals($expected, iterator_to_array($actual));
     }
 }
