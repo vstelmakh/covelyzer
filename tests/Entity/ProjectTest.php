@@ -52,7 +52,7 @@ class ProjectTest extends TestCase
     {
         $expected = \DateTimeImmutable::createFromFormat('U', self::TIMESTAMP);
         $actual = $this->project->getTimestamp();
-        $this->assertEquals($expected, $actual);
+        self::assertEquals($expected, $actual);
     }
 
     public function testGetMetrics(): void
@@ -64,7 +64,7 @@ class ProjectTest extends TestCase
         $metricsXpathElement = $this->project->getXpathElement()->createElement($metricsNode);
         $expected = new ProjectMetrics($metricsXpathElement);
 
-        $this->assertEquals($expected, $actual);
+        self::assertEquals($expected, $actual);
     }
 
     public function testGetFiles(): void
@@ -75,9 +75,9 @@ class ProjectTest extends TestCase
         $fileNode = $this->domDocument->getElementsByTagName('file')->item(0);
         $fileXpathElement = $this->project->getXpathElement()->createElement($fileNode);
         $file = new File($fileXpathElement);
-        $expected = $this->getGenerator([$file]);
+        $expected = [$file];
 
-        $this->assertEquals($expected, $actual);
+        self::assertEquals($expected, iterator_to_array($actual));
     }
 
     public function testGetClasses(): void
@@ -88,19 +88,8 @@ class ProjectTest extends TestCase
         $classNode = $this->domDocument->getElementsByTagName('class')->item(0);
         $classXpathElement = $this->project->getXpathElement()->createElement($classNode);
         $class = new ClassEntity($classXpathElement);
-        $expected = $this->getGenerator([$class]);
+        $expected = [$class];
 
-        $this->assertEquals($expected, $actual);
-    }
-
-    /**
-     * @param array|mixed[] $array
-     * @return \Generator|mixed[]
-     */
-    private function getGenerator(array $array): \Generator
-    {
-        foreach ($array as $item) {
-            yield $item;
-        }
+        self::assertEquals($expected, iterator_to_array($actual));
     }
 }
