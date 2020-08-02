@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<coverage generated="1596396043">
+  <project timestamp="1596396043">
+    <package name="VStelmakh\Covelyzer\Command">
+      <file name="/src/Command/CovelyzerCommand.php">
+        <class name="VStelmakh\Covelyzer\Command\CovelyzerCommand" namespace="VStelmakh\Covelyzer\Command">
+          <metrics complexity="14" methods="8" coveredmethods="8" conditionals="0" coveredconditionals="0" statements="49" coveredstatements="49" elements="100" coveredelements="90"/>
+        </class>
+        <metrics loc="176" ncloc="142" classes="1" methods="8" coveredmethods="8" conditionals="0" coveredconditionals="0" statements="49" coveredstatements="49" elements="100" coveredelements="90"/>
+      </file>
+    </package>
+    <metrics files="1" loc="176" ncloc="142" classes="1" methods="8" coveredmethods="8" conditionals="0" coveredconditionals="0" statements="49" coveredstatements="49" elements="100" coveredelements="90"/>
+  </project>
+</coverage>

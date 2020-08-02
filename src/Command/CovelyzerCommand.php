@@ -23,7 +23,7 @@ class CovelyzerCommand extends Command
 {
     public const SUCCESS = 0;
     public const FAILURE = 1;
-    private const ARG_COVERAGE = 'coverage';
+    public const ARG_COVERAGE = 'coverage';
 
     /**
      * @var CovelyzerStyle
