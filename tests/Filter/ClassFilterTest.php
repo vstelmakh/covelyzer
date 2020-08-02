@@ -11,16 +11,6 @@ use VStelmakh\Covelyzer\Filter\ClassFilter;
 
 class ClassFilterTest extends TestCase
 {
-    /**
-     * @var \DOMDocument
-     */
-    private $domDocument;
-
-    public function setUp(): void
-    {
-        $this->domDocument = new \DOMDocument();
-    }
-
     public function testSetLimit(): void
     {
         $classes = [
@@ -96,19 +86,19 @@ class ClassFilterTest extends TestCase
      */
     private function createClass(string $name, string $namespace, int $coverage): ClassEntity
     {
-        $this->domDocument = new \DOMDocument();
+        $domDocument = new \DOMDocument();
 
-        $class = $this->domDocument->createElement('class');
+        $class = $domDocument->createElement('class');
         $class->setAttribute('name', $name);
         $class->setAttribute('namespace', $namespace);
-        $this->domDocument->appendChild($class);
+        $domDocument->appendChild($class);
 
-        $metrics = $this->domDocument->createElement('metrics');
+        $metrics = $domDocument->createElement('metrics');
         $metrics->setAttribute('elements', '100');
         $metrics->setAttribute('coveredelements', (string) $coverage);
         $class->appendChild($metrics);
 
-        $domXpath = new \DOMXPath($this->domDocument);
+        $domXpath = new \DOMXPath($domDocument);
         $xpathElement = new XpathElement($domXpath, $class);
 
         return new ClassEntity($xpathElement);
