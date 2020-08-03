@@ -31,7 +31,7 @@ class HelpCommandTest extends TestCase
         $this->commandTester->execute([]);
         $output = $this->commandTester->getDisplay();
         self::assertStringContainsString($this->getHeader(), $output);
-        self::assertStringContainsString('Covelyzer 1.0.0', $output);
+        self::assertStringMatchesFormat('%ACovelyzer%s1.0.0%A', $output);
     }
 
     /**
