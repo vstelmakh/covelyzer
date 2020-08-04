@@ -141,10 +141,12 @@ class CovelyzerStyle
             }
         }
 
+        // @codeCoverageIgnoreStart
         throw new \RuntimeException(sprintf(
             'Can\'t set table style. Any of "%s" methods exist in "%s"',
             implode(', ', $methods),
             TableStyle::class
         ));
+        // @codeCoverageIgnoreEnd
     }
 }

@@ -17,13 +17,17 @@ class FileReader
         }
 
         if (!is_readable($filePath)) {
+            // @codeCoverageIgnoreStart
             throw new \RuntimeException(sprintf('File "%s" not readable', $filePath));
+            // @codeCoverageIgnoreEnd
         }
 
         $contents = @file_get_contents($filePath);
 
         if ($contents === false) {
+            // @codeCoverageIgnoreStart
             throw new \RuntimeException(sprintf('File "%s" get contents error', $filePath));
+            // @codeCoverageIgnoreEnd
         }
 
         return $contents;

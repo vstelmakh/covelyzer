@@ -26,6 +26,8 @@ class ConfigLocator
             }
         }
 
+        // @codeCoverageIgnoreStart
         throw new \RuntimeException('Unable to locate config');
+        // @codeCoverageIgnoreEnd
     }
 }

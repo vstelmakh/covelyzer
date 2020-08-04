@@ -59,7 +59,9 @@ class ConfigParser
         $covelyzerElement = $covelyzerNodeList->item(0);
 
         if ($covelyzerElement === null) {
+            // @codeCoverageIgnoreStart
             throw new \RuntimeException('XML parse error. Covelyzer node not found');
+            // @codeCoverageIgnoreEnd
         }
 
         $xpathElement = new XpathElement($domXpath, $covelyzerElement);
