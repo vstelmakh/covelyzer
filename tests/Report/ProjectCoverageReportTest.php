@@ -28,8 +28,8 @@ class ProjectCoverageReportTest extends TestCase
         $metrics->method('getCoverage')->willReturn($coverage);
 
         $classes = [
-            $this->createClass('Class1', '', 100),
-            $this->createClass('Class2', '', 100),
+            $this->createClass('Class1', '', 99),
+            $this->createClass('Class2', '', 99),
         ];
 
         $project = $this->createMock(Project::class);

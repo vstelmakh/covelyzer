@@ -55,8 +55,10 @@ class ProjectCoverageReport implements ReportInterface
 
         $leastCoveredClasses = $this->getLeastCoveredClasses();
 
-        $covelyzerStyle->newLine();
-        $this->tableRenderer->render($covelyzerStyle, $leastCoveredClasses);
+        if (!empty($leastCoveredClasses)) {
+            $covelyzerStyle->newLine();
+            $this->tableRenderer->render($covelyzerStyle, $leastCoveredClasses);
+        }
     }
 
     /**
@@ -76,6 +78,7 @@ class ProjectCoverageReport implements ReportInterface
     {
         $classes = $this->project->getClasses();
         $filter = new ClassFilter($classes);
+        $filter->setCoverageBelow(100);
         $filter->setLimit(self::CLASS_COUNT);
         return $filter->getResult();
     }
