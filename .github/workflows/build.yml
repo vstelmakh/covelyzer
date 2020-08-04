@@ -11,7 +11,7 @@ jobs:
         strategy:
             matrix:
                 php: ['7.1', '7.4']
-                symfony: ['^2.7', '^3', '^4', '^5']
+                symfony: ['^3.2', '^4', '^5']
                 composer: ['--prefer-lowest', '']
                 exclude:
                     - php: '7.1'
@@ -59,6 +59,10 @@ jobs:
               run: composer run-script test:phpstan
               if: success() || failure()
 
-            - name: Run PHP Unit
-              run: composer run-script test:phpunit
+            - name: Run PHP Unit with coverage
+              run: composer run-script test:phpunit-coverage
+              if: success() || failure()
+
+            - name: Run Covelyzer
+              run: composer run-script test:covelyzer
               if: success() || failure()
