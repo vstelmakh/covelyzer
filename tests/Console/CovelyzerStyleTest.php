@@ -76,8 +76,8 @@ class CovelyzerStyleTest extends TestCase
     public function statusDataProvider(): array
     {
         return [
-            [CovelyzerCommand::SUCCESS, '<bg=green> SUCCESS </>', false],
-            [CovelyzerCommand::FAILURE, '<bg=red> FAIL </>', false],
+            [CovelyzerCommand::SUCCESS, '<fg=black;bg=green> SUCCESS </>', false],
+            [CovelyzerCommand::FAILURE, '<fg=white;bg=red> FAIL </>', false],
             [2, null, true],
         ];
     }

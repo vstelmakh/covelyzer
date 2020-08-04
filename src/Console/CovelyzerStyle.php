@@ -45,10 +45,10 @@ class CovelyzerStyle
         $this->newLine();
         switch ($status) {
             case CovelyzerCommand::SUCCESS:
-                $this->writeln('<bg=green> SUCCESS </>');
+                $this->writeln('<fg=black;bg=green> SUCCESS </>');
                 break;
             case CovelyzerCommand::FAILURE:
-                $this->writeln('<bg=red> FAIL </>');
+                $this->writeln('<fg=white;bg=red> FAIL </>');
                 break;
             default:
                 throw new \RuntimeException(sprintf('Unexpected status code "%s"', $status));
