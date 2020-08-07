@@ -84,6 +84,8 @@
                 </xs:simpleType>
             </xs:attribute>
             <xs:attribute name="namespace" use="required" type="xs:string"/>
+            <xs:attribute name="fullPackage" use="optional" type="xs:string"/>
+            <xs:attribute name="package" use="optional" type="xs:string"/>
         </xs:complexType>
     </xs:element>
     <xs:element name="line">
