@@ -13,7 +13,7 @@ class ConfigLocatorTest extends TestCase
     public function testGetConfigPath(): void
     {
         $configLocator = new ConfigLocator();
-        $expected = realpath(App::ROOT_DIR . '/covelyzer.xml');
+        $expected = realpath(App::ROOT_DIR . '/resources/default-config.xml');
         $actual = $configLocator->getConfigPath();
         self::assertSame($expected, $actual);
     }

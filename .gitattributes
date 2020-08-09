@@ -6,6 +6,9 @@
 /tests export-ignore
 /CHANGELOG.md export-ignore
 
+/resources/clover.xsd export-ignore
+
+covelyzer.xml export-ignore
 phpcs.xml export-ignore
 phpstan.neon export-ignore
 phpunit.xml export-ignore

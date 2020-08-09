@@ -33,7 +33,7 @@ vendor/bin/phpunit --dump-xdebug-filter var/xdebug-filter.php && \
 vendor/bin/phpunit --prepend var/xdebug-filter.php --coverage-clover var/coverage.xml --whitelist src
 ```
 
-Run Covelyzer with [default configuration](./covelyzer.xml):  
+Run Covelyzer with [default configuration](./resources/default-config.xml):  
 ```bash
 vendor/bin/covelyzer var/coverage.xml
 ```
@@ -41,15 +41,19 @@ vendor/bin/covelyzer var/coverage.xml
 To specify additional configuration see [Configuration](#configuration).
 
 ## Configuration
-Configuration defined in `covelyzer.xml` located in project root (where vendor dir located).  
-If no configuration file provided - [default configuration](./covelyzer.xml) is used.  
+Configuration defined in `covelyzer.xml` located under project root (where vendor dir located). Or
+configuration path could be overridden via `-c | --config` command option:
+```bash
+vendor/bin/covelyzer var/coverage.xml -c path/to/covelyzer.xml
+```
+If no configuration file provided - [default configuration](./resources/default-config.xml) is used.  
 
 Example configuration:
 ```xml
 <?xml version="1.0" encoding="UTF-8" ?>
 <covelyzer
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="vendor/vstelmakh/covelyzer/resources/covelyzer-config.xsd"
+    xsi:noNamespaceSchemaLocation="vendor/vstelmakh/covelyzer/resources/config.xsd"
 >
     <project minCoverage="100"/>
     <class minCoverage="100"/>
@@ -58,6 +62,7 @@ Example configuration:
 
 #### `<project>` element
 Defines configuration for project coverage report. If defined project coverage report will be rendered.  
+- parent: `<covelyzer>`
 - use: `optional`
 
 ##### `minCoverage` attribute
@@ -67,6 +72,7 @@ Minimum coverage value. If project have less coverage - report will fail.
 
 #### `<class>` element
 Defines configuration for class coverage report. If defined class coverage report will be rendered.  
+- parent: `<covelyzer>`
 - use: `optional`
 
 ##### `minCoverage` attribute
@@ -75,6 +81,12 @@ Minimum coverage value. If any class have less coverage - report will fail.
 - type: `float` (min: 0, max: 100)  
 
 ## Tips & tricks
+### Use help option
+Use `-h | --help` command option to display Covelyzer help data. It contains all available arguments, options and usage examples.
+```bash
+vendor/bin/covelyzer --help
+```
+
 ### Ignore code blocks
 Covelyzer will analyze full report produced by PHPUnit. In some cases you want to ignore some code parts to not be taken into account.
 There are several options available, see [Ignoring code blocks](https://phpunit.readthedocs.io/en/9.2/code-coverage-analysis.html#ignoring-code-blocks)
