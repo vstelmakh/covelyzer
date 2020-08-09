@@ -12,7 +12,7 @@ use VStelmakh\Covelyzer\Util\FileReader;
 
 class ConfigParser
 {
-    private const XSD_PATH = App::ROOT_DIR . '/resources/covelyzer-config.xsd';
+    private const XSD_PATH = App::ROOT_DIR . '/resources/config.xsd';
 
     /**
      * @var DocumentFactory
