@@ -41,7 +41,11 @@ vendor/bin/covelyzer var/coverage.xml
 To specify additional configuration see [Configuration](#configuration).
 
 ## Configuration
-Configuration defined in `covelyzer.xml` located in project root (where vendor dir located).  
+Configuration defined in `covelyzer.xml` located under project root (where vendor dir located). Or
+configuration path could be overridden via `-c | --config` command option:
+```bash
+vendor/bin/covelyzer var/coverage.xml -c path/to/covelyzer.xml
+```
 If no configuration file provided - [default configuration](./resources/default-config.xml) is used.  
 
 Example configuration:
@@ -77,6 +81,12 @@ Minimum coverage value. If any class have less coverage - report will fail.
 - type: `float` (min: 0, max: 100)  
 
 ## Tips & tricks
+### Use help option
+Use `-h | --help` command option to display Covelyzer help data. It contains all available arguments, options and usage examples.
+```bash
+vendor/bin/covelyzer --help
+```
+
 ### Ignore code blocks
 Covelyzer will analyze full report produced by PHPUnit. In some cases you want to ignore some code parts to not be taken into account.
 There are several options available, see [Ignoring code blocks](https://phpunit.readthedocs.io/en/9.2/code-coverage-analysis.html#ignoring-code-blocks)

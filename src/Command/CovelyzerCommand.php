@@ -75,7 +75,7 @@ class CovelyzerCommand extends Command
             self::OPT_CONFIG,
             'c',
             InputOption::VALUE_REQUIRED,
-            'Path to config at custom location'
+            'Path to config file at custom location'
         );
         $this->addUsage('path/to/coverage.xml');
     }
