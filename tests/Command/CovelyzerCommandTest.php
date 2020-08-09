@@ -17,6 +17,8 @@ use VStelmakh\Covelyzer\Util\FileReader;
 
 class CovelyzerCommandTest extends TestCase
 {
+    private const REPORT_PATH = __DIR__ . '/coverage.xml';
+
     /**
      * @var CommandTester
      */
@@ -70,6 +72,49 @@ class CovelyzerCommandTest extends TestCase
     }
 
     /**
+     * @dataProvider executeConfigOptionDataProvider
+     *
+     * @param string|null $configPath
+     * @param bool $isSuccess
+     */
+    public function testExecuteConfigOption(?string $configPath, bool $isSuccess): void
+    {
+        $input = [CovelyzerCommand::ARG_COVERAGE => self::REPORT_PATH];
+        if ($configPath !== null) {
+            $input['--' . CovelyzerCommand::OPT_CONFIG] = $configPath;
+        }
+
+        if (!$isSuccess) {
+            $this->expectException(\RuntimeException::class);
+        }
+
+        $defaultConfig = 'resources/default-config.xml';
+        $this->configLocator->method('getConfigPath')->willReturn($defaultConfig);
+        $this->commandTester->execute($input);
+
+        $output = $this->commandTester->getDisplay();
+
+        if ($configPath !== null) {
+            self::assertStringContainsString('Config:    ' . realpath($configPath), $output);
+        } else {
+            self::assertStringContainsString('Config:    ' . $defaultConfig, $output);
+        }
+    }
+
+    /**
+     * @return array[]
+     */
+    public function executeConfigOptionDataProvider(): array
+    {
+        return [
+            [null, true],
+            ['covelyzer.xml', true],
+            ['./covelyzer.xml', true],
+            ['/dev/null/covelyzer.xml', false],
+        ];
+    }
+
+    /**
      * @dataProvider executeDataProvider
      *
      * @param float|null $minProjectCoverage
@@ -84,10 +129,10 @@ class CovelyzerCommandTest extends TestCase
         $this->configLocator->method('getConfigPath')->willReturn('');
         $this->configParser->method('parseConfig')->willReturn($config);
 
-        $this->commandTester->execute([CovelyzerCommand::ARG_COVERAGE => __DIR__ . '/coverage.xml']);
+        $this->commandTester->execute([CovelyzerCommand::ARG_COVERAGE => self::REPORT_PATH]);
         $output = $this->commandTester->getDisplay();
 
-        $reportPath = realpath(__DIR__ . '/coverage.xml');
+        $reportPath = realpath(self::REPORT_PATH);
         self::assertStringContainsString('Report:    ' . $reportPath, $output);
         self::assertStringContainsString('Timestamp: 2020-08-02 19:20:43', $output);
 

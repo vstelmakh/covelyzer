@@ -7,6 +7,7 @@ namespace VStelmakh\Covelyzer\Command;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use VStelmakh\Covelyzer\Util\ConfigLocator;
 use VStelmakh\Covelyzer\Entity\Config;
@@ -24,6 +25,7 @@ class CovelyzerCommand extends Command
     public const SUCCESS = 0;
     public const FAILURE = 1;
     public const ARG_COVERAGE = 'coverage';
+    public const OPT_CONFIG = 'config';
 
     /**
      * @var CovelyzerStyle
@@ -64,7 +66,17 @@ class CovelyzerCommand extends Command
     protected function configure(): void
     {
         $this->setName('covelyzer');
-        $this->addArgument(self::ARG_COVERAGE, InputArgument::REQUIRED, 'Path to coverage report file .xml');
+        $this->addArgument(
+            self::ARG_COVERAGE,
+            InputArgument::REQUIRED,
+            'Path to coverage report file .xml'
+        );
+        $this->addOption(
+            self::OPT_CONFIG,
+            'c',
+            InputOption::VALUE_REQUIRED,
+            'Path to config at custom location'
+        );
         $this->addUsage('path/to/coverage.xml');
     }
 
@@ -88,10 +100,10 @@ class CovelyzerCommand extends Command
         $this->covelyzerStyle->title('Covelyzer');
         $this->covelyzerStyle->newLine();
 
-        $configPath = $this->configLocator->getConfigPath();
+        $configPath = $this->getConfigPath($input);
         $config = $this->configParser->parseConfig($configPath);
 
-        $coverageFilePath = $this->getCoverageFilePath($input);
+        $coverageFilePath = $this->getCoveragePath($input);
         $project = $this->coverageParser->parseCoverage($coverageFilePath);
         $this->renderCoverageSummary($configPath, $coverageFilePath, $project);
 
@@ -106,14 +118,35 @@ class CovelyzerCommand extends Command
      * @param InputInterface $input
      * @return string
      */
-    private function getCoverageFilePath(InputInterface $input): string
+    private function getConfigPath(InputInterface $input): string
     {
-        /** @var string $filePath */
-        $filePath = $input->getArgument(self::ARG_COVERAGE);
-        $realPath = realpath($filePath);
+        /** @var string|null $path */
+        $path = $input->getOption(self::OPT_CONFIG);
+        if ($path !== null) {
+            $realPath = realpath($path);
+
+            if ($realPath === false) {
+                throw new \RuntimeException(sprintf('Unable to resolve config path "%s"', $path));
+            }
+
+            return $realPath;
+        }
+
+        return $this->configLocator->getConfigPath();
+    }
+
+    /**
+     * @param InputInterface $input
+     * @return string
+     */
+    private function getCoveragePath(InputInterface $input): string
+    {
+        /** @var string $path */
+        $path = $input->getArgument(self::ARG_COVERAGE);
+        $realPath = realpath($path);
 
         if ($realPath === false) {
-            throw new \RuntimeException(sprintf('Unable to resolve coverage path "%s"', $filePath));
+            throw new \RuntimeException(sprintf('Unable to resolve coverage path "%s"', $path));
         }
 
         return $realPath;

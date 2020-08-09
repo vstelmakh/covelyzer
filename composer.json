@@ -44,7 +44,7 @@
             "@test:phpunit --dump-xdebug-filter var/xdebug-filter.php",
             "@test:phpunit --prepend var/xdebug-filter.php --coverage-clover var/coverage.xml"
         ],
-        "test:covelyzer": "bin/covelyzer var/coverage.xml --ansi",
+        "test:covelyzer": "bin/covelyzer var/coverage.xml --ansi -c covelyzer.xml",
 
         "test:all": [
             "@test:phpcs",

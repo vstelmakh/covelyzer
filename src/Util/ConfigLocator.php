@@ -19,7 +19,7 @@ class ConfigLocator
     public function getConfigPath(): string
     {
         foreach (self::PATHS as $path) {
-            $realPath =  realpath($path);
+            $realPath = realpath($path);
 
             if ($realPath !== false) {
                 return $realPath;
