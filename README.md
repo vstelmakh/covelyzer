@@ -58,6 +58,7 @@ Example configuration:
 
 #### `<project>` element
 Defines configuration for project coverage report. If defined project coverage report will be rendered.  
+- parent: `<covelyzer>`
 - use: `optional`
 
 ##### `minCoverage` attribute
@@ -67,6 +68,7 @@ Minimum coverage value. If project have less coverage - report will fail.
 
 #### `<class>` element
 Defines configuration for class coverage report. If defined class coverage report will be rendered.  
+- parent: `<covelyzer>`
 - use: `optional`
 
 ##### `minCoverage` attribute
