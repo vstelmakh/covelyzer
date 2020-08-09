@@ -55,8 +55,9 @@
     },
     "scripts-descriptions": {
         "test:phpcs": "Run PHP Code Sniffer",
-        "test:phpstan": "Run PHP Stan",
-        "test:phpunit": "Run PHP Unit",
+        "test:phpstan": "Run PHPStan",
+        "test:phpunit": "Run PHPUnit",
+        "test:phpunit-coverage": "Run PHPUnit with coverage",
         "test:all": "Run all code analysis and tests"
     }
 }

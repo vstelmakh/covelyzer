@@ -55,11 +55,11 @@ jobs:
               run: composer run-script test:phpcs
               if: success()
 
-            - name: Run PHP Stan
+            - name: Run PHPStan
               run: composer run-script test:phpstan
               if: success() || failure()
 
-            - name: Run PHP Unit with coverage
+            - name: Run PHPUnit with coverage
               run: composer run-script test:phpunit-coverage
               if: success() || failure()
 
