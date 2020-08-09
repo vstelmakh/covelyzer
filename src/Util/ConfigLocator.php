@@ -10,7 +10,7 @@ class ConfigLocator
 {
     private const PATHS = [
         App::ROOT_DIR . '/../../../covelyzer.xml', // project root config
-        App::ROOT_DIR . '/covelyzer.xml', // default config
+        App::ROOT_DIR . '/resources/default-config.xml', // default config
     ];
 
     /**

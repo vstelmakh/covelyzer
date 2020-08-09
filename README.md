@@ -33,7 +33,7 @@ vendor/bin/phpunit --dump-xdebug-filter var/xdebug-filter.php && \
 vendor/bin/phpunit --prepend var/xdebug-filter.php --coverage-clover var/coverage.xml --whitelist src
 ```
 
-Run Covelyzer with [default configuration](./covelyzer.xml):  
+Run Covelyzer with [default configuration](./resources/default-config.xml):  
 ```bash
 vendor/bin/covelyzer var/coverage.xml
 ```
@@ -42,7 +42,7 @@ To specify additional configuration see [Configuration](#configuration).
 
 ## Configuration
 Configuration defined in `covelyzer.xml` located in project root (where vendor dir located).  
-If no configuration file provided - [default configuration](./covelyzer.xml) is used.  
+If no configuration file provided - [default configuration](./resources/default-config.xml) is used.  
 
 Example configuration:
 ```xml
