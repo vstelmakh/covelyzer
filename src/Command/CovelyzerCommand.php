@@ -163,7 +163,7 @@ class CovelyzerCommand extends Command
         $this->covelyzerStyle->writeln('  Report:    ' . $coverageFilePath);
 
         $datetime = $project->getTimestamp();
-        $displayDateTime = $datetime ? $datetime->format('Y-m-d H:i:s') : '--';
+        $displayDateTime = $datetime ? $datetime->format('Y-m-d H:i:s') . ' UTC' : '--';
         $this->covelyzerStyle->writeln('  Timestamp: ' . $displayDateTime);
     }
 
