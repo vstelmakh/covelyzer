@@ -115,6 +115,40 @@ class CovelyzerCommandTest extends TestCase
     }
 
     /**
+     * @dataProvider executeTimezoneOptionDataProvider
+     *
+     * @param string $timezone
+     * @throws \Exception
+     */
+    public function testExecuteTimezoneOption(string $timezone): void
+    {
+        $input = [
+            CovelyzerCommand::ARG_COVERAGE => self::REPORT_PATH,
+            '--' . CovelyzerCommand::OPT_TIMEZONE => $timezone
+        ];
+
+        $this->commandTester->execute($input);
+        $output = $this->commandTester->getDisplay();
+
+        $datetime = new \DateTime('2020-08-02 19:20:43');
+        $datetime->setTimezone(new \DateTimeZone($timezone));
+        $datetimeFormat = $datetime->format('Y-m-d H:i:s T');
+
+        self::assertStringContainsString('Timestamp: ' . $datetimeFormat, $output);
+    }
+
+    /**
+     * @return array[]
+     */
+    public function executeTimezoneOptionDataProvider(): array
+    {
+        return [
+            ['GMT+3'],
+            ['Europe/Berlin'],
+        ];
+    }
+
+    /**
      * @dataProvider executeDataProvider
      *
      * @param float|null $minProjectCoverage
