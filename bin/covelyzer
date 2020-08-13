@@ -29,7 +29,7 @@ $fileReader = new FileReader();
 $configParser = new ConfigParser($documentFactory, $fileReader);
 $coverageParser = new CoverageParser($documentFactory, $fileReader);
 
-$application = new Application('Covelyzer', '0.1.0');
+$application = new Application('Covelyzer', '0.2.0');
 
 $command = new CovelyzerCommand($configLocator, $configParser, $coverageParser);
 $application->add($command);

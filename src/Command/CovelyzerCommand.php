@@ -26,6 +26,7 @@ class CovelyzerCommand extends Command
     public const FAILURE = 1;
     public const ARG_COVERAGE = 'coverage';
     public const OPT_CONFIG = 'config';
+    public const OPT_TIMEZONE = 'timezone';
 
     /**
      * @var CovelyzerStyle
@@ -77,6 +78,12 @@ class CovelyzerCommand extends Command
             InputOption::VALUE_REQUIRED,
             'Path to config file at custom location'
         );
+        $this->addOption(
+            self::OPT_TIMEZONE,
+            null,
+            InputOption::VALUE_REQUIRED,
+            'Timezone to display timestamp'
+        );
         $this->addUsage('path/to/coverage.xml');
     }
 
@@ -105,7 +112,8 @@ class CovelyzerCommand extends Command
 
         $coverageFilePath = $this->getCoveragePath($input);
         $project = $this->coverageParser->parseCoverage($coverageFilePath);
-        $this->renderCoverageSummary($configPath, $coverageFilePath, $project);
+        $timezone = $this->getTimezone($input, $config);
+        $this->renderCoverageSummary($configPath, $coverageFilePath, $project, $timezone);
 
         $reports = $this->initReports($project, $config);
         $status = $this->renderReports($reports);
@@ -153,17 +161,34 @@ class CovelyzerCommand extends Command
     }
 
     /**
+     * @param InputInterface $input
+     * @param Config $config
+     * @return string|null
+     */
+    private function getTimezone(InputInterface $input, Config $config): ?string
+    {
+        /** @var string|null $timezone */
+        $timezone = $input->getOption(self::OPT_TIMEZONE);
+        return $timezone ?? $config->getTimeZone();
+    }
+
+    /**
      * @param string $configFilePath
      * @param string $coverageFilePath
      * @param Project $project
+     * @param string|null $timezone
      */
-    private function renderCoverageSummary(string $configFilePath, string $coverageFilePath, Project $project): void
-    {
+    private function renderCoverageSummary(
+        string $configFilePath,
+        string $coverageFilePath,
+        Project $project,
+        ?string $timezone = null
+    ): void {
         $this->covelyzerStyle->writeln('  Config:    ' . $configFilePath);
         $this->covelyzerStyle->writeln('  Report:    ' . $coverageFilePath);
 
-        $datetime = $project->getTimestamp();
-        $displayDateTime = $datetime ? $datetime->format('Y-m-d H:i:s') : '--';
+        $datetime = $project->getTimestamp($timezone);
+        $displayDateTime = $datetime ? $datetime->format('Y-m-d H:i:s T') : '--';
         $this->covelyzerStyle->writeln('  Timestamp: ' . $displayDateTime);
     }
 

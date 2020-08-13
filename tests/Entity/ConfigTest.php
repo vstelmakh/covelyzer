@@ -39,6 +39,35 @@ class ConfigTest extends TestCase
     }
 
     /**
+     * @dataProvider getTimeZoneDataProvider
+     *
+     * @param bool $isAttributeExist
+     * @param string|null $timezone
+     */
+    public function testGetTimeZone(bool $isAttributeExist, ?string $timezone): void
+    {
+        if ($isAttributeExist) {
+            $this->rootElement->setAttribute('timezone', (string) $timezone);
+        }
+
+        $actual = $this->config->getTimeZone();
+        self::assertSame($timezone, $actual);
+    }
+
+    /**
+     * @return array&array[]
+     */
+    public function getTimeZoneDataProvider(): array
+    {
+        return [
+            [false, null],
+            [true, ''],
+            [true, 'GMT+3'],
+            [true, 'Europe/Berlin'],
+        ];
+    }
+
+    /**
      * @dataProvider getMinCoverageDataProvider
      *
      * @param bool $isElementExist
