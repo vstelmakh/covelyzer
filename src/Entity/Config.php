@@ -17,6 +17,14 @@ class Config extends AbstractEntity
     }
 
     /**
+     * @return string|null
+     */
+    public function getTimeZone(): ?string
+    {
+        return $this->getXpathElement()->getAttribute('timezone');
+    }
+
+    /**
      * @return float|null
      */
     public function getMinProjectCoverage(): ?float
