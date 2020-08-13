@@ -48,11 +48,39 @@ class ProjectTest extends TestCase
         $this->project = new Project($xpathElement);
     }
 
-    public function testGetTimestamp(): void
+    /**
+     * @dataProvider getTimestampDataProvider
+     *
+     * @param string|null $timezone
+     */
+    public function testGetTimestamp(?string $timezone): void
     {
-        $expected = \DateTimeImmutable::createFromFormat('U', self::TIMESTAMP);
-        $actual = $this->project->getTimestamp();
-        self::assertEquals($expected, $actual);
+        /** @var \DateTime $expected */
+        $expected = \DateTime::createFromFormat('U', self::TIMESTAMP);
+        if ($timezone !== null) {
+            $expected->setTimezone(new \DateTimeZone($timezone));
+        }
+
+        /** @var \DateTime $actual */
+        $actual = $this->project->getTimestamp($timezone);
+
+        $format = 'Y-m-d H:i:s T';
+        self::assertSame(
+            $expected->format($format),
+            $actual->format($format)
+        );
+    }
+
+    /**
+     * @return array&array[]
+     */
+    public function getTimestampDataProvider(): array
+    {
+        return [
+            [null],
+            ['GMT+3'],
+            ['Europe/Berlin'],
+        ];
     }
 
     public function testGetMetrics(): void
