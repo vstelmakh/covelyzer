@@ -54,11 +54,21 @@ Example configuration:
 <covelyzer
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="vendor/vstelmakh/covelyzer/resources/config.xsd"
+    timezone="Europe/Berlin"
 >
     <project minCoverage="100"/>
     <class minCoverage="100"/>
 </covelyzer>
 ```
+
+#### `<covelyzer>` element
+Config root element.
+
+##### `timezone` attribute
+Timezone should be used to display timestamp.  
+- use: `optional`
+- type: `string` (see: [php timezones](https://www.php.net/manual/en/timezones.php))
+- command option: could be defined/overridden via `--timezone` command option
 
 #### `<project>` element
 Defines configuration for project coverage report. If defined project coverage report will be rendered.  
