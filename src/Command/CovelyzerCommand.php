@@ -105,7 +105,8 @@ class CovelyzerCommand extends Command
 
         $coverageFilePath = $this->getCoveragePath($input);
         $project = $this->coverageParser->parseCoverage($coverageFilePath);
-        $this->renderCoverageSummary($configPath, $coverageFilePath, $project);
+        $timezone = $config->getTimeZone();
+        $this->renderCoverageSummary($configPath, $coverageFilePath, $project, $timezone);
 
         $reports = $this->initReports($project, $config);
         $status = $this->renderReports($reports);
@@ -156,14 +157,19 @@ class CovelyzerCommand extends Command
      * @param string $configFilePath
      * @param string $coverageFilePath
      * @param Project $project
+     * @param string|null $timezone
      */
-    private function renderCoverageSummary(string $configFilePath, string $coverageFilePath, Project $project): void
-    {
+    private function renderCoverageSummary(
+        string $configFilePath,
+        string $coverageFilePath,
+        Project $project,
+        ?string $timezone = null
+    ): void {
         $this->covelyzerStyle->writeln('  Config:    ' . $configFilePath);
         $this->covelyzerStyle->writeln('  Report:    ' . $coverageFilePath);
 
-        $datetime = $project->getTimestamp();
-        $displayDateTime = $datetime ? $datetime->format('Y-m-d H:i:s') . ' UTC' : '--';
+        $datetime = $project->getTimestamp($timezone);
+        $displayDateTime = $datetime ? $datetime->format('Y-m-d H:i:s T') : '--';
         $this->covelyzerStyle->writeln('  Timestamp: ' . $displayDateTime);
     }
 
