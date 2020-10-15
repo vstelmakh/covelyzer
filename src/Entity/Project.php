@@ -11,7 +11,7 @@ class Project extends AbstractEntity
     public const NAME = 'project';
 
     /**
-     * @var \DateTimeImmutable|null
+     * @var \DateTime|null
      */
     private $timestamp;
 
@@ -23,16 +23,27 @@ class Project extends AbstractEntity
         parent::__construct($xpathElement);
 
         $timestamp = $this->getXpathElement()->getAttribute('timestamp');
-        $datetime = $timestamp ? \DateTimeImmutable::createFromFormat('U', $timestamp) : null;
+        $datetime = $timestamp ? \DateTime::createFromFormat('U', $timestamp) : null;
         $this->timestamp = $datetime ?: null;
     }
 
     /**
-     * @return \DateTimeImmutable|null
+     * @param string|null $timezone
+     * @return \DateTime|null see supported timezones https://www.php.net/manual/en/timezones.php
      */
-    public function getTimestamp(): ?\DateTimeImmutable
+    public function getTimestamp(string $timezone = null): ?\DateTime
     {
-        return $this->timestamp;
+        if ($this->timestamp === null) {
+            // @codeCoverageIgnoreStart
+            return null;
+            // @codeCoverageIgnoreEnd
+        }
+
+        $datetime = clone $this->timestamp;
+        if ($timezone !== null) {
+            $datetime->setTimezone(new \DateTimeZone($timezone));
+        }
+        return $datetime;
     }
 
     /**
