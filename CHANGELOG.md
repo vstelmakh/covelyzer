@@ -4,6 +4,7 @@ Releases following [Semantic Versioning](https://semver.org/spec/v2.0.0.html) sp
 
 ### v0.2.0 (unreleased)
 - Added timezone configuration
+- Added PHP 8 compatibility
 
 ### v0.1.0 (2020-08-09)
 - Added clover parser
